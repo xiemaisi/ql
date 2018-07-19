@@ -1085,4 +1085,5 @@ module DataFlow {
   import Configuration
   import TrackedNodes
   import Portals
+  import ImportSummaries
 }
