@@ -1,0 +1,28 @@
+| (package m1) | src/node_modules/m1/index.js:1:18:1:25 | (x) => x | true |
+| (parameter (package m1) 0) | src/index.js:3:46:3:60 | "Hello, world!" | false |
+| (parameter (package m2) 0) | src/tst3.js:4:7:4:10 | "me" | false |
+| (parameter (package m2) 0) | src/tst3.js:5:7:5:10 | "me" | false |
+| (parameter (property (package m2) false m) 0) | src/tst3.js:4:15:4:18 | "hi" | false |
+| (parameter (property (package m2) false s) 0) | src/tst3.js:5:15:5:21 | "there" | false |
+| (parameter (property (package m2) true default) 0) | src/tst3.js:4:7:4:10 | "me" | false |
+| (parameter (property (package m2) true default) 0) | src/tst3.js:5:7:5:10 | "me" | false |
+| (parameter (property (package m2) true foo) 0) | src/tst2.js:5:5:5:12 | { x: o } | false |
+| (parameter (property (package m2) true m) 0) | src/tst3.js:2:5:2:8 | "hi" | false |
+| (parameter (property (package m2) true s) 0) | src/tst3.js:3:5:3:11 | "there" | false |
+| (parameter (property (property (package m2) true default) false m) 0) | src/tst3.js:4:15:4:18 | "hi" | false |
+| (parameter (property (property (package m2) true default) false s) 0) | src/tst3.js:5:15:5:21 | "there" | false |
+| (parameter (property (property (package m2) true default) true m) 0) | src/tst3.js:2:5:2:8 | "hi" | false |
+| (parameter (property (property (package m2) true default) true s) 0) | src/tst3.js:3:5:3:11 | "there" | false |
+| (parameter (property (return (package m2)) true m) 0) | src/tst3.js:4:15:4:18 | "hi" | false |
+| (parameter (property (return (package m2)) true s) 0) | src/tst3.js:5:15:5:21 | "there" | false |
+| (parameter (property (return (property (package m2) true default)) true m) 0) | src/tst3.js:4:15:4:18 | "hi" | false |
+| (parameter (property (return (property (package m2) true default)) true s) 0) | src/tst3.js:5:15:5:21 | "there" | false |
+| (property (package m2) true default) | src/node_modules/m2/main.js:6:16:16:1 | class { ...  y; }\\n} | true |
+| (property (package m2) true foo) | src/node_modules/m2/main.js:1:8:4:1 | functio ... "hi";\\n} | true |
+| (property (parameter (property (package m2) true foo) 0) true x) | src/tst2.js:5:10:5:10 | o | false |
+| (property (parameter (property (package m2) true foo) 0) true z) | src/node_modules/m2/main.js:3:9:3:12 | "hi" | true |
+| (property (property (package m2) true default) false name) | src/node_modules/m2/main.js:8:17:8:20 | name | true |
+| (property (property (package m2) true default) true s) | src/node_modules/m2/main.js:15:11:15:27 | (y) { return y; } | true |
+| (property (property (parameter (property (package m2) true foo) 0) true x) true y) | src/tst2.js:3:6:3:8 | "?" | false |
+| (return (package m1)) | src/node_modules/m1/index.js:1:25:1:25 | x | true |
+| (return (property (property (package m2) true default) true s)) | src/node_modules/m2/main.js:15:24:15:24 | y | true |
