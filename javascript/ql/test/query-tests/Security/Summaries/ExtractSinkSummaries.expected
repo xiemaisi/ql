@@ -1,0 +1,19 @@
+| (parameter (property (package infer-sources) true codeInjection) 0) | CodeInjection |
+| (parameter (property (package infer-sources) true commandInjection) 0) | CommandInjection |
+| (parameter (property (package infer-sources) true hashPass) 0) | CodeInjection |
+| (parameter (property (package infer-sources) true hashPass) 0) | InsufficientPasswordHash |
+| (parameter (property (package infer-sources) true multiple) 0) | CodeInjection |
+| (parameter (property (package infer-sources) true multiple) 0) | CommandInjection |
+| (parameter (property (package infer-sources) true redirect) 0) | ServerSideUrlRedirect |
+| (parameter (property (package infer-sources) true reflected) 0) | ReflectedXss |
+| (parameter (property (package infer-sources) true reflected) 0) | StackTraceExposure |
+| (parameter (property (package infer-sources) true regexpInj) 0) | RegExpInjection |
+| (parameter (property (package infer-sources) true remotePropeInjection) 1) | RemotePropertyInjection |
+| (parameter (property (package infer-sources) true sqlInj) 0) | SqlInjection |
+| (parameter (property (package infer-sources) true taintedPath) 0) | TaintedPath |
+| (parameter (property (package infer-sources) true unsafeDes) 0) | UnsafeDeserialization |
+| (parameter (property (package infer-sources) true xmlBomb) 0) | XmlBomb |
+| (parameter (property (package infer-sources) true xmlBomb) 0) | Xxe |
+| (parameter (property (package infer-sources) true xpathInj) 0) | XpathInjection |
+| (parameter (property (package infer-sources) true xxe) 0) | XmlBomb |
+| (property (parameter (property (package infer-sources) true regexpInj) 0) true name) | RegExpInjection |
