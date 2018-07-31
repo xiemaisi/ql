@@ -127,12 +127,16 @@ module CommandInjection {
   private predicate indirectCommandInjection(DataFlow::Node sink, SystemCommandExecution sys) {
     exists (ArgumentListTracking cfg, DataFlow::ArrayLiteralNode args,
             StringLiteral shell, string dashC |
-      shellCmd(shell, dashC) and
+      indirectCommandInjectionCandidate(args, shell, dashC) and
       cfg.hasFlow(DataFlow::valueNode(shell), sys.getACommandArgument()) and
       cfg.hasFlow(args, sys.getArgumentList()) and
-      args.getAPropertyWrite().getRhs().mayHaveStringValue(dashC) and
       sink = args.getAPropertyWrite().getRhs()
     )
+  }
+
+  private predicate indirectCommandInjectionCandidate(DataFlow::ArrayLiteralNode args, StringLiteral shell, string dashC) {
+    shellCmd(shell, dashC) and
+    args.getAPropertyWrite().getRhs().mayHaveStringValue(dashC)
   }
 }
 
