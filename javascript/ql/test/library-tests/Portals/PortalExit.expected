@@ -1,38 +1,44 @@
-| (member (member (parameter (member (root https://www.npmjs.com/package/m2) true foo) 0) true x) true y) | src/m2/main.js:2:15:2:19 | p.x.y | true |
-| (member (member (root https://www.npmjs.com/package/m2) true default) false m) | src/m3/tst3.js:4:1:4:13 | new A("me").m | false |
-| (member (member (root https://www.npmjs.com/package/m2) true default) false name) | src/m2/main.js:12:27:12:35 | this.name | true |
-| (member (member (root https://www.npmjs.com/package/m2) true default) false s) | src/m3/tst3.js:5:1:5:13 | new A("me").s | false |
-| (member (member (root https://www.npmjs.com/package/m2) true default) true m) | src/m3/tst3.js:2:1:2:3 | A.m | false |
-| (member (member (root https://www.npmjs.com/package/m2) true default) true s) | src/m3/tst3.js:3:1:3:3 | A.s | false |
-| (member (parameter (member (root https://www.npmjs.com/package/m2) true foo) 0) true x) | src/m2/main.js:2:15:2:17 | p.x | true |
-| (member (return (member (root https://www.npmjs.com/package/m2) true default)) true m) | src/m3/tst3.js:4:1:4:13 | new A("me").m | false |
-| (member (return (member (root https://www.npmjs.com/package/m2) true default)) true s) | src/m3/tst3.js:5:1:5:13 | new A("me").s | false |
-| (member (return (root https://www.npmjs.com/package/m2)) true m) | src/m3/tst3.js:4:1:4:13 | new A("me").m | false |
-| (member (return (root https://www.npmjs.com/package/m2)) true s) | src/m3/tst3.js:5:1:5:13 | new A("me").s | false |
-| (member (root https://www.npmjs.com/package/m2) false m) | src/m3/tst3.js:4:1:4:13 | new A("me").m | false |
-| (member (root https://www.npmjs.com/package/m2) false s) | src/m3/tst3.js:5:1:5:13 | new A("me").s | false |
-| (member (root https://www.npmjs.com/package/m2) true default) | src/m3/tst3.js:1:8:1:8 | A | false |
-| (member (root https://www.npmjs.com/package/m2) true foo) | src/m3/tst2.js:1:10:1:12 | foo | false |
-| (member (root https://www.npmjs.com/package/m2) true m) | src/m3/tst3.js:2:1:2:3 | A.m | false |
-| (member (root https://www.npmjs.com/package/m2) true s) | src/m3/tst3.js:3:1:3:3 | A.s | false |
-| (parameter (member (member (root https://www.npmjs.com/package/m2) true default) true s) 0) | src/m2/main.js:15:12:15:12 | y | true |
-| (parameter (member (root https://www.npmjs.com/package/m2) true foo) 0) | src/m2/main.js:1:21:1:21 | p | true |
+| (instance (member (root https://www.npmjs.com/package/m2) default)) | src/m2/main.js:8:5:8:8 | this | true |
+| (instance (member (root https://www.npmjs.com/package/m2) default)) | src/m2/main.js:12:27:12:30 | this | true |
+| (instance (member (root https://www.npmjs.com/package/m2) default)) | src/m3/tst3.js:4:1:4:11 | new A("me") | false |
+| (instance (member (root https://www.npmjs.com/package/m2) default)) | src/m3/tst3.js:5:1:5:11 | new A("me") | false |
+| (instance (root https://www.npmjs.com/package/m2)) | src/m3/tst3.js:4:1:4:11 | new A("me") | false |
+| (instance (root https://www.npmjs.com/package/m2)) | src/m3/tst3.js:5:1:5:11 | new A("me") | false |
+| (member (instance (member (root https://www.npmjs.com/package/m2) default)) m) | src/m3/tst3.js:4:1:4:13 | new A("me").m | false |
+| (member (instance (member (root https://www.npmjs.com/package/m2) default)) name) | src/m2/main.js:12:27:12:35 | this.name | true |
+| (member (instance (member (root https://www.npmjs.com/package/m2) default)) s) | src/m3/tst3.js:5:1:5:13 | new A("me").s | false |
+| (member (instance (root https://www.npmjs.com/package/m2)) m) | src/m3/tst3.js:4:1:4:13 | new A("me").m | false |
+| (member (instance (root https://www.npmjs.com/package/m2)) s) | src/m3/tst3.js:5:1:5:13 | new A("me").s | false |
+| (member (member (parameter (member (root https://www.npmjs.com/package/m2) foo) 0) x) y) | src/m2/main.js:2:15:2:19 | p.x.y | true |
+| (member (member (root https://www.npmjs.com/package/m2) default) m) | src/m3/tst3.js:2:1:2:3 | A.m | false |
+| (member (member (root https://www.npmjs.com/package/m2) default) s) | src/m3/tst3.js:3:1:3:3 | A.s | false |
+| (member (parameter (member (root https://www.npmjs.com/package/m2) foo) 0) x) | src/m2/main.js:2:15:2:17 | p.x | true |
+| (member (return (member (root https://www.npmjs.com/package/m2) default)) m) | src/m3/tst3.js:4:1:4:13 | new A("me").m | false |
+| (member (return (member (root https://www.npmjs.com/package/m2) default)) s) | src/m3/tst3.js:5:1:5:13 | new A("me").s | false |
+| (member (return (root https://www.npmjs.com/package/m2)) m) | src/m3/tst3.js:4:1:4:13 | new A("me").m | false |
+| (member (return (root https://www.npmjs.com/package/m2)) s) | src/m3/tst3.js:5:1:5:13 | new A("me").s | false |
+| (member (root https://www.npmjs.com/package/m2) default) | src/m3/tst3.js:1:8:1:8 | A | false |
+| (member (root https://www.npmjs.com/package/m2) foo) | src/m3/tst2.js:1:10:1:12 | foo | false |
+| (member (root https://www.npmjs.com/package/m2) m) | src/m3/tst3.js:2:1:2:3 | A.m | false |
+| (member (root https://www.npmjs.com/package/m2) s) | src/m3/tst3.js:3:1:3:3 | A.s | false |
+| (parameter (member (member (root https://www.npmjs.com/package/m2) default) s) 0) | src/m2/main.js:15:12:15:12 | y | true |
+| (parameter (member (root https://www.npmjs.com/package/m2) foo) 0) | src/m2/main.js:1:21:1:21 | p | true |
 | (parameter (root https://www.npmjs.com/package/m1) 0) | src/m1/index.js:1:19:1:19 | x | true |
-| (return (member (member (root https://www.npmjs.com/package/m2) true default) false m)) | src/m3/tst3.js:4:1:4:19 | new A("me").m("hi") | false |
-| (return (member (member (root https://www.npmjs.com/package/m2) true default) false s)) | src/m3/tst3.js:5:1:5:22 | new A(" ... there") | false |
-| (return (member (member (root https://www.npmjs.com/package/m2) true default) true m)) | src/m3/tst3.js:2:1:2:9 | A.m("hi") | false |
-| (return (member (member (root https://www.npmjs.com/package/m2) true default) true s)) | src/m3/tst3.js:3:1:3:12 | A.s("there") | false |
-| (return (member (return (member (root https://www.npmjs.com/package/m2) true default)) true m)) | src/m3/tst3.js:4:1:4:19 | new A("me").m("hi") | false |
-| (return (member (return (member (root https://www.npmjs.com/package/m2) true default)) true s)) | src/m3/tst3.js:5:1:5:22 | new A(" ... there") | false |
-| (return (member (return (root https://www.npmjs.com/package/m2)) true m)) | src/m3/tst3.js:4:1:4:19 | new A("me").m("hi") | false |
-| (return (member (return (root https://www.npmjs.com/package/m2)) true s)) | src/m3/tst3.js:5:1:5:22 | new A(" ... there") | false |
-| (return (member (root https://www.npmjs.com/package/m2) false m)) | src/m3/tst3.js:4:1:4:19 | new A("me").m("hi") | false |
-| (return (member (root https://www.npmjs.com/package/m2) false s)) | src/m3/tst3.js:5:1:5:22 | new A(" ... there") | false |
-| (return (member (root https://www.npmjs.com/package/m2) true default)) | src/m3/tst3.js:4:1:4:11 | new A("me") | false |
-| (return (member (root https://www.npmjs.com/package/m2) true default)) | src/m3/tst3.js:5:1:5:11 | new A("me") | false |
-| (return (member (root https://www.npmjs.com/package/m2) true foo)) | src/m3/tst2.js:5:1:5:13 | foo({ x: o }) | false |
-| (return (member (root https://www.npmjs.com/package/m2) true m)) | src/m3/tst3.js:2:1:2:9 | A.m("hi") | false |
-| (return (member (root https://www.npmjs.com/package/m2) true s)) | src/m3/tst3.js:3:1:3:12 | A.s("there") | false |
+| (return (member (instance (member (root https://www.npmjs.com/package/m2) default)) m)) | src/m3/tst3.js:4:1:4:19 | new A("me").m("hi") | false |
+| (return (member (instance (member (root https://www.npmjs.com/package/m2) default)) s)) | src/m3/tst3.js:5:1:5:22 | new A(" ... there") | false |
+| (return (member (instance (root https://www.npmjs.com/package/m2)) m)) | src/m3/tst3.js:4:1:4:19 | new A("me").m("hi") | false |
+| (return (member (instance (root https://www.npmjs.com/package/m2)) s)) | src/m3/tst3.js:5:1:5:22 | new A(" ... there") | false |
+| (return (member (member (root https://www.npmjs.com/package/m2) default) m)) | src/m3/tst3.js:2:1:2:9 | A.m("hi") | false |
+| (return (member (member (root https://www.npmjs.com/package/m2) default) s)) | src/m3/tst3.js:3:1:3:12 | A.s("there") | false |
+| (return (member (return (member (root https://www.npmjs.com/package/m2) default)) m)) | src/m3/tst3.js:4:1:4:19 | new A("me").m("hi") | false |
+| (return (member (return (member (root https://www.npmjs.com/package/m2) default)) s)) | src/m3/tst3.js:5:1:5:22 | new A(" ... there") | false |
+| (return (member (return (root https://www.npmjs.com/package/m2)) m)) | src/m3/tst3.js:4:1:4:19 | new A("me").m("hi") | false |
+| (return (member (return (root https://www.npmjs.com/package/m2)) s)) | src/m3/tst3.js:5:1:5:22 | new A(" ... there") | false |
+| (return (member (root https://www.npmjs.com/package/m2) default)) | src/m3/tst3.js:4:1:4:11 | new A("me") | false |
+| (return (member (root https://www.npmjs.com/package/m2) default)) | src/m3/tst3.js:5:1:5:11 | new A("me") | false |
+| (return (member (root https://www.npmjs.com/package/m2) foo)) | src/m3/tst2.js:5:1:5:13 | foo({ x: o }) | false |
+| (return (member (root https://www.npmjs.com/package/m2) m)) | src/m3/tst3.js:2:1:2:9 | A.m("hi") | false |
+| (return (member (root https://www.npmjs.com/package/m2) s)) | src/m3/tst3.js:3:1:3:12 | A.s("there") | false |
 | (return (root https://www.npmjs.com/package/m1)) | src/m3/index.js:3:43:3:61 | m1("Hello, world!") | false |
 | (return (root https://www.npmjs.com/package/m2)) | src/m3/tst3.js:4:1:4:11 | new A("me") | false |
 | (return (root https://www.npmjs.com/package/m2)) | src/m3/tst3.js:5:1:5:11 | new A("me") | false |

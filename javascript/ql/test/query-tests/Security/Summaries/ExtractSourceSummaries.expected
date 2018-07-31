@@ -1,39 +1,39 @@
-| (parameter (parameter (member (root https://www.npmjs.com/package/infer-sources) true listen) 0) 0) | ClientSideUrlRedirect |
-| (parameter (parameter (member (root https://www.npmjs.com/package/infer-sources) true listen) 0) 0) | CodeInjection |
-| (parameter (parameter (member (root https://www.npmjs.com/package/infer-sources) true listen) 0) 0) | CommandInjection |
-| (parameter (parameter (member (root https://www.npmjs.com/package/infer-sources) true listen) 0) 0) | ConditionalBypass |
-| (parameter (parameter (member (root https://www.npmjs.com/package/infer-sources) true listen) 0) 0) | CorsMisconfigurationForCredentials |
-| (parameter (parameter (member (root https://www.npmjs.com/package/infer-sources) true listen) 0) 0) | DifferentKindsComparisonBypass |
-| (parameter (parameter (member (root https://www.npmjs.com/package/infer-sources) true listen) 0) 0) | DomBasedXss |
-| (parameter (parameter (member (root https://www.npmjs.com/package/infer-sources) true listen) 0) 0) | NosqlInjection |
-| (parameter (parameter (member (root https://www.npmjs.com/package/infer-sources) true listen) 0) 0) | ReflectedXss |
-| (parameter (parameter (member (root https://www.npmjs.com/package/infer-sources) true listen) 0) 0) | RegExpInjection |
-| (parameter (parameter (member (root https://www.npmjs.com/package/infer-sources) true listen) 0) 0) | RemoteJsonTrackingConfig |
-| (parameter (parameter (member (root https://www.npmjs.com/package/infer-sources) true listen) 0) 0) | RemotePropertyInjection |
-| (parameter (parameter (member (root https://www.npmjs.com/package/infer-sources) true listen) 0) 0) | ServerSideUrlRedirect |
-| (parameter (parameter (member (root https://www.npmjs.com/package/infer-sources) true listen) 0) 0) | SqlInjection |
-| (parameter (parameter (member (root https://www.npmjs.com/package/infer-sources) true listen) 0) 0) | TaintedFormatString |
-| (parameter (parameter (member (root https://www.npmjs.com/package/infer-sources) true listen) 0) 0) | TaintedPath |
-| (parameter (parameter (member (root https://www.npmjs.com/package/infer-sources) true listen) 0) 0) | UnsafeDeserialization |
-| (parameter (parameter (member (root https://www.npmjs.com/package/infer-sources) true listen) 0) 0) | XmlBomb |
-| (parameter (parameter (member (root https://www.npmjs.com/package/infer-sources) true listen) 0) 0) | XpathInjection |
-| (parameter (parameter (member (root https://www.npmjs.com/package/infer-sources) true listen) 0) 0) | Xxe |
-| (return (member (root https://www.npmjs.com/package/infer-sources) true cookieSource)) | ClientSideUrlRedirect |
-| (return (member (root https://www.npmjs.com/package/infer-sources) true cookieSource)) | CodeInjection |
-| (return (member (root https://www.npmjs.com/package/infer-sources) true cookieSource)) | CommandInjection |
-| (return (member (root https://www.npmjs.com/package/infer-sources) true cookieSource)) | ConditionalBypass |
-| (return (member (root https://www.npmjs.com/package/infer-sources) true cookieSource)) | CorsMisconfigurationForCredentials |
-| (return (member (root https://www.npmjs.com/package/infer-sources) true cookieSource)) | DomBasedXss |
-| (return (member (root https://www.npmjs.com/package/infer-sources) true cookieSource)) | NosqlInjection |
-| (return (member (root https://www.npmjs.com/package/infer-sources) true cookieSource)) | ReflectedXss |
-| (return (member (root https://www.npmjs.com/package/infer-sources) true cookieSource)) | RegExpInjection |
-| (return (member (root https://www.npmjs.com/package/infer-sources) true cookieSource)) | RemoteJsonTrackingConfig |
-| (return (member (root https://www.npmjs.com/package/infer-sources) true cookieSource)) | RemotePropertyInjection |
-| (return (member (root https://www.npmjs.com/package/infer-sources) true cookieSource)) | ServerSideUrlRedirect |
-| (return (member (root https://www.npmjs.com/package/infer-sources) true cookieSource)) | SqlInjection |
-| (return (member (root https://www.npmjs.com/package/infer-sources) true cookieSource)) | TaintedFormatString |
-| (return (member (root https://www.npmjs.com/package/infer-sources) true cookieSource)) | TaintedPath |
-| (return (member (root https://www.npmjs.com/package/infer-sources) true cookieSource)) | UnsafeDeserialization |
-| (return (member (root https://www.npmjs.com/package/infer-sources) true cookieSource)) | XmlBomb |
-| (return (member (root https://www.npmjs.com/package/infer-sources) true cookieSource)) | XpathInjection |
-| (return (member (root https://www.npmjs.com/package/infer-sources) true cookieSource)) | Xxe |
+| (parameter (parameter (member (root https://www.npmjs.com/package/infer-sources) listen) 0) 0) | ClientSideUrlRedirect |
+| (parameter (parameter (member (root https://www.npmjs.com/package/infer-sources) listen) 0) 0) | CodeInjection |
+| (parameter (parameter (member (root https://www.npmjs.com/package/infer-sources) listen) 0) 0) | CommandInjection |
+| (parameter (parameter (member (root https://www.npmjs.com/package/infer-sources) listen) 0) 0) | ConditionalBypass |
+| (parameter (parameter (member (root https://www.npmjs.com/package/infer-sources) listen) 0) 0) | CorsMisconfigurationForCredentials |
+| (parameter (parameter (member (root https://www.npmjs.com/package/infer-sources) listen) 0) 0) | DifferentKindsComparisonBypass |
+| (parameter (parameter (member (root https://www.npmjs.com/package/infer-sources) listen) 0) 0) | DomBasedXss |
+| (parameter (parameter (member (root https://www.npmjs.com/package/infer-sources) listen) 0) 0) | NosqlInjection |
+| (parameter (parameter (member (root https://www.npmjs.com/package/infer-sources) listen) 0) 0) | ReflectedXss |
+| (parameter (parameter (member (root https://www.npmjs.com/package/infer-sources) listen) 0) 0) | RegExpInjection |
+| (parameter (parameter (member (root https://www.npmjs.com/package/infer-sources) listen) 0) 0) | RemoteJsonTrackingConfig |
+| (parameter (parameter (member (root https://www.npmjs.com/package/infer-sources) listen) 0) 0) | RemotePropertyInjection |
+| (parameter (parameter (member (root https://www.npmjs.com/package/infer-sources) listen) 0) 0) | ServerSideUrlRedirect |
+| (parameter (parameter (member (root https://www.npmjs.com/package/infer-sources) listen) 0) 0) | SqlInjection |
+| (parameter (parameter (member (root https://www.npmjs.com/package/infer-sources) listen) 0) 0) | TaintedFormatString |
+| (parameter (parameter (member (root https://www.npmjs.com/package/infer-sources) listen) 0) 0) | TaintedPath |
+| (parameter (parameter (member (root https://www.npmjs.com/package/infer-sources) listen) 0) 0) | UnsafeDeserialization |
+| (parameter (parameter (member (root https://www.npmjs.com/package/infer-sources) listen) 0) 0) | XmlBomb |
+| (parameter (parameter (member (root https://www.npmjs.com/package/infer-sources) listen) 0) 0) | XpathInjection |
+| (parameter (parameter (member (root https://www.npmjs.com/package/infer-sources) listen) 0) 0) | Xxe |
+| (return (member (root https://www.npmjs.com/package/infer-sources) cookieSource)) | ClientSideUrlRedirect |
+| (return (member (root https://www.npmjs.com/package/infer-sources) cookieSource)) | CodeInjection |
+| (return (member (root https://www.npmjs.com/package/infer-sources) cookieSource)) | CommandInjection |
+| (return (member (root https://www.npmjs.com/package/infer-sources) cookieSource)) | ConditionalBypass |
+| (return (member (root https://www.npmjs.com/package/infer-sources) cookieSource)) | CorsMisconfigurationForCredentials |
+| (return (member (root https://www.npmjs.com/package/infer-sources) cookieSource)) | DomBasedXss |
+| (return (member (root https://www.npmjs.com/package/infer-sources) cookieSource)) | NosqlInjection |
+| (return (member (root https://www.npmjs.com/package/infer-sources) cookieSource)) | ReflectedXss |
+| (return (member (root https://www.npmjs.com/package/infer-sources) cookieSource)) | RegExpInjection |
+| (return (member (root https://www.npmjs.com/package/infer-sources) cookieSource)) | RemoteJsonTrackingConfig |
+| (return (member (root https://www.npmjs.com/package/infer-sources) cookieSource)) | RemotePropertyInjection |
+| (return (member (root https://www.npmjs.com/package/infer-sources) cookieSource)) | ServerSideUrlRedirect |
+| (return (member (root https://www.npmjs.com/package/infer-sources) cookieSource)) | SqlInjection |
+| (return (member (root https://www.npmjs.com/package/infer-sources) cookieSource)) | TaintedFormatString |
+| (return (member (root https://www.npmjs.com/package/infer-sources) cookieSource)) | TaintedPath |
+| (return (member (root https://www.npmjs.com/package/infer-sources) cookieSource)) | UnsafeDeserialization |
+| (return (member (root https://www.npmjs.com/package/infer-sources) cookieSource)) | XmlBomb |
+| (return (member (root https://www.npmjs.com/package/infer-sources) cookieSource)) | XpathInjection |
+| (return (member (root https://www.npmjs.com/package/infer-sources) cookieSource)) | Xxe |

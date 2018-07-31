@@ -1,19 +1,19 @@
-| (member (parameter (member (root https://www.npmjs.com/package/infer-sources) true regexpInj) 0) true name) | RegExpInjection |
-| (parameter (member (root https://www.npmjs.com/package/infer-sources) true codeInjection) 0) | CodeInjection |
-| (parameter (member (root https://www.npmjs.com/package/infer-sources) true commandInjection) 0) | CommandInjection |
-| (parameter (member (root https://www.npmjs.com/package/infer-sources) true hashPass) 0) | CodeInjection |
-| (parameter (member (root https://www.npmjs.com/package/infer-sources) true hashPass) 0) | InsufficientPasswordHash |
-| (parameter (member (root https://www.npmjs.com/package/infer-sources) true multiple) 0) | CodeInjection |
-| (parameter (member (root https://www.npmjs.com/package/infer-sources) true multiple) 0) | CommandInjection |
-| (parameter (member (root https://www.npmjs.com/package/infer-sources) true redirect) 0) | ServerSideUrlRedirect |
-| (parameter (member (root https://www.npmjs.com/package/infer-sources) true reflected) 0) | ReflectedXss |
-| (parameter (member (root https://www.npmjs.com/package/infer-sources) true reflected) 0) | StackTraceExposure |
-| (parameter (member (root https://www.npmjs.com/package/infer-sources) true regexpInj) 0) | RegExpInjection |
-| (parameter (member (root https://www.npmjs.com/package/infer-sources) true remotePropeInjection) 1) | RemotePropertyInjection |
-| (parameter (member (root https://www.npmjs.com/package/infer-sources) true sqlInj) 0) | SqlInjection |
-| (parameter (member (root https://www.npmjs.com/package/infer-sources) true taintedPath) 0) | TaintedPath |
-| (parameter (member (root https://www.npmjs.com/package/infer-sources) true unsafeDes) 0) | UnsafeDeserialization |
-| (parameter (member (root https://www.npmjs.com/package/infer-sources) true xmlBomb) 0) | XmlBomb |
-| (parameter (member (root https://www.npmjs.com/package/infer-sources) true xmlBomb) 0) | Xxe |
-| (parameter (member (root https://www.npmjs.com/package/infer-sources) true xpathInj) 0) | XpathInjection |
-| (parameter (member (root https://www.npmjs.com/package/infer-sources) true xxe) 0) | XmlBomb |
+| (member (parameter (member (root https://www.npmjs.com/package/infer-sources) regexpInj) 0) name) | RegExpInjection |
+| (parameter (member (root https://www.npmjs.com/package/infer-sources) codeInjection) 0) | CodeInjection |
+| (parameter (member (root https://www.npmjs.com/package/infer-sources) commandInjection) 0) | CommandInjection |
+| (parameter (member (root https://www.npmjs.com/package/infer-sources) hashPass) 0) | CodeInjection |
+| (parameter (member (root https://www.npmjs.com/package/infer-sources) hashPass) 0) | InsufficientPasswordHash |
+| (parameter (member (root https://www.npmjs.com/package/infer-sources) multiple) 0) | CodeInjection |
+| (parameter (member (root https://www.npmjs.com/package/infer-sources) multiple) 0) | CommandInjection |
+| (parameter (member (root https://www.npmjs.com/package/infer-sources) redirect) 0) | ServerSideUrlRedirect |
+| (parameter (member (root https://www.npmjs.com/package/infer-sources) reflected) 0) | ReflectedXss |
+| (parameter (member (root https://www.npmjs.com/package/infer-sources) reflected) 0) | StackTraceExposure |
+| (parameter (member (root https://www.npmjs.com/package/infer-sources) regexpInj) 0) | RegExpInjection |
+| (parameter (member (root https://www.npmjs.com/package/infer-sources) remotePropeInjection) 1) | RemotePropertyInjection |
+| (parameter (member (root https://www.npmjs.com/package/infer-sources) sqlInj) 0) | SqlInjection |
+| (parameter (member (root https://www.npmjs.com/package/infer-sources) taintedPath) 0) | TaintedPath |
+| (parameter (member (root https://www.npmjs.com/package/infer-sources) unsafeDes) 0) | UnsafeDeserialization |
+| (parameter (member (root https://www.npmjs.com/package/infer-sources) xmlBomb) 0) | XmlBomb |
+| (parameter (member (root https://www.npmjs.com/package/infer-sources) xmlBomb) 0) | Xxe |
+| (parameter (member (root https://www.npmjs.com/package/infer-sources) xpathInj) 0) | XpathInjection |
+| (parameter (member (root https://www.npmjs.com/package/infer-sources) xxe) 0) | XmlBomb |

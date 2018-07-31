@@ -18,14 +18,19 @@ private newtype TPortal =
     NpmPackagePortal::exports(pkgName, _)
   }
   or
-  MkPropertyPortal(Portal base, boolean isStatic, string prop) {
+  MkPropertyPortal(Portal base, string prop) {
     (
-     PropertyPortal::reads(base, isStatic, prop, _, _) or
-     PropertyPortal::writes(base, isStatic, prop, _, _)
+     PropertyPortal::reads(base, prop, _, _) or
+     PropertyPortal::writes(base, prop, _, _)
     ) and
     // only consider alpha-numeric properties, excluding special properties
     // and properties whose names look like they are meant to be internal
     prop.regexpMatch("(?!prototype$|__)[a-zA-Z_]\\w*")
+  }
+  or
+  MkInstancePortal(Portal base) {
+    InstancePortal::instanceUse(base, _, _) or
+    InstancePortal::instanceDef(base, _, _)
   }
   or
   MkParameterPortal(Portal base, int i) {
@@ -174,64 +179,105 @@ private abstract class CompoundPortal extends Portal {
  * A portal corresponding to a named property of another portal.
  */
 private class PropertyPortal extends CompoundPortal, MkPropertyPortal {
-  boolean isStatic;
   string prop;
 
-  PropertyPortal() { this = MkPropertyPortal(base, isStatic, prop) }
+  PropertyPortal() { this = MkPropertyPortal(base, prop) }
 
   override DataFlow::SourceNode getAnExitNode(boolean isUserControlled) {
-    PropertyPortal::reads(base, isStatic, prop, result, isUserControlled)
+    PropertyPortal::reads(base, prop, result, isUserControlled)
   }
 
   override DataFlow::Node getAnEntryNode(boolean escapes) {
-    PropertyPortal::writes(base, isStatic, prop, result, escapes)
+    PropertyPortal::writes(base, prop, result, escapes)
   }
 
-  override string toString() { result = "(member " + base + " " + isStatic + " " + prop + ")" }
+  override string toString() { result = "(member " + base + " " + prop + ")" }
 }
 
 private module PropertyPortal {
-  private predicate portalInstanceAccess(Portal base, DataFlow::SourceNode nd, boolean isUserControlled) {
-    exists (AbstractInstance i |
-      base.getAnEntryNode(isUserControlled).getALocalSource() = DataFlow::valueNode(i.getConstructor().getDefinition()) and
-      nd.analyze().getAValue() = i
-    )
+  private DataFlow::SourceNode portalBaseRef(Portal base, boolean escapes) {
+    result = base.getAnExitNode(escapes)
     or
-    nd = base.getAnExitNode(isUserControlled).getAnInstantiation()
+    result = base.getAnEntryNode(escapes).getALocalSource()
   }
 
-  private DataFlow::SourceNode portalBaseRef(Portal base, boolean isStatic, boolean escapes) {
-    result = base.getAnExitNode(escapes) and
-    isStatic = true
-    or
-    result = base.getAnEntryNode(escapes).getALocalSource() and
-    isStatic = true
-    or
-    portalInstanceAccess(base, result, escapes) and
-    isStatic = false
-  }
-
-  predicate reads(Portal base, boolean isStatic, string prop, DataFlow::SourceNode read, boolean isUserControlled) {
-    read = portalBaseRef(base, isStatic, isUserControlled).getAPropertyRead(prop)
+  predicate reads(Portal base, string prop, DataFlow::SourceNode read, boolean isUserControlled) {
+    read = portalBaseRef(base, isUserControlled).getAPropertyRead(prop)
     or
     exists (string pkg |
       NpmPackagePortal::imports(read, pkg, prop) and
       base = MkNpmPackagePortal(pkg) and
-      isUserControlled = false and
-      isStatic = true
+      isUserControlled = false
     )
   }
 
-  predicate writes(Portal base, boolean isStatic, string prop, DataFlow::Node rhs, boolean escapes) {
-    portalBaseRef(base, isStatic, escapes).hasPropertyWrite(prop, rhs)
+  predicate writes(Portal base, string prop, DataFlow::Node rhs, boolean escapes) {
+    portalBaseRef(base, escapes).hasPropertyWrite(prop, rhs)
     or
     exists (string pkgName, AnalyzedModule m | m = NpmPackagePortal::packageMain(pkgName) |
       base = MkNpmPackagePortal(pkgName) and
       exists (AnalyzedPropertyWrite apw |
         apw.writes(m.(AnalyzedModule).getAnExportsValue(), prop, rhs)
       ) and
-      escapes = true and
-      isStatic = true
+      escapes = true
+    )
+  }
+}
+
+/**
+ * A portal corresponding to an instantiation of another portal.
+ */
+private class InstancePortal extends CompoundPortal, MkInstancePortal {
+  InstancePortal() { this = MkInstancePortal(base) }
+
+  override DataFlow::SourceNode getAnExitNode(boolean isUserControlled) {
+    InstancePortal::instanceUse(base, result, isUserControlled)
+  }
+
+  override DataFlow::Node getAnEntryNode(boolean escapes) {
+    InstancePortal::instanceDef(base, result, escapes)
+  }
+
+  override string toString() { result = "(instance " + base + ")" }
+}
+
+private module InstancePortal {
+  private predicate isInstance(Portal base, DataFlow::SourceNode ctor, AbstractInstance i, boolean escapes) {
+    ctor = DataFlow::valueNode(i.getConstructor().getDefinition()) and
+    ctor.flowsTo(base.getAnEntryNode(escapes))
+  }
+
+  predicate instanceUse(Portal base, DataFlow::SourceNode nd, boolean isUserControlled) {
+    nd = base.getAnExitNode(isUserControlled).getAnInstantiation()
+    or
+    isInstance(base, _, nd.analyze().getAValue(), isUserControlled)
+  }
+
+  predicate instanceMemberDef(Portal base, string name, DataFlow::Node rhs, boolean escapes) {
+    exists (AbstractInstance i, DataFlow::SourceNode ctor | isInstance(base, ctor, i, escapes) |
+      // ES2015 instance method
+      exists (MemberDefinition mem |
+        mem = ctor.getAstNode().(ClassDefinition).getAMember() and
+        not mem.isStatic() and not mem instanceof ConstructorDefinition |
+        name = mem.getName() and
+        rhs = DataFlow::valueNode(mem.getInit())
+      )
+      or
+      // ES5 instance method
+      exists (DataFlow::PropWrite pw |
+        pw = ctor.getAPropertyRead("prototype").getAPropertyWrite(name) and
+        rhs = pw.getRhs()
+      )
+    )
+  }
+
+  predicate instanceDef(Portal base, DataFlow::Node nd, boolean escapes) {
+    exists (DataFlow::FunctionNode fn |
+      isInstance(base, fn, _, escapes) and
+      nd = fn.getAReturn() and
+      // technically, any function could be a constructor; we heuristically restrict ourselves
+      // to those functions that contain at least one use of `this`
+      exists (DataFlow::ThisNode thiz | thiz.getBinder() = fn)
     )
   }
 }
