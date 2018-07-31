@@ -616,6 +616,11 @@ class PathNode extends TPathNode {
     result = cfg
   }
 
+  /** Gets the summary of the path underlying this path node. */
+  PathSummary getPathSummary() {
+    result = summary
+  }
+
   /** Gets a successor node of this path node. */
   PathNode getASuccessor() {
     exists (DataFlow::Node succ, PathSummary newSummary |

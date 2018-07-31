@@ -10,6 +10,10 @@
 import AllConfigurations
 import PortalEntrySink
 
-from TaintTracking::Configuration cfg, DataFlow::Node source, PortalEntrySink sink
-where cfg.hasFlow(source, sink)
-select sink.getPortal(), cfg.toString()
+from TaintTracking::Configuration cfg, DataFlow::PathNode source, DataFlow::PathNode sink,
+     DataFlow::Portal p
+where cfg.hasPathFlow(source, sink) and
+      p = sink.getNode().(PortalEntrySink).getPortal() and
+      // avoid constructing infeasible paths
+      sink.getPathSummary().hasCall() = false
+select p, cfg.toString()

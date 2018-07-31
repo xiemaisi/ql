@@ -128,6 +128,39 @@ function forLoop(input) {
     return res;
 }
 
+function notASink(foo) {
+  return foo;
+}
+
+// this call should not make parameter `foo` a command injection sink
+eval(notASink(42));
+
+function cookieSource() {
+  return document.cookie;
+}
+
+function notACookieSource(x) {
+  return x;
+}
+
+// this call should not make the return value of `notACookieSource` a remote flow source
+notACookieSource(document.cookie);
+
+function invoke(cb, x) {
+  cb(x);
+}
+
+// this call should not make the first argument to `cb` above a remote flow source
+invoke((x)=>x, document.cookie);
+
+function g(x) {
+  h(x);
+}
+
+function h(y) {
+  return y;
+}
+
 module.exports = {
     codeInjection: codeInjection,
     commandInjection: commandInjection,
@@ -144,5 +177,11 @@ module.exports = {
     xxe: xxe,
     unsafeDes: unsafeDes,
     redirect: redirect,
-    reflected: reflected
+    reflected: reflected,
+    notASink: notASink,
+    cookieSource: cookieSource,
+    notACookieSource: notACookieSource,
+    invoke: invoke,
+    g: g,
+    h: h
 }

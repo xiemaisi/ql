@@ -1,3 +1,7 @@
+| (parameter (property (package infer-sources) true h) 0) | (return (property (package infer-sources) true h)) |
+| (parameter (property (package infer-sources) true invoke) 1) | (parameter (parameter (property (package infer-sources) true invoke) 0) 0) |
+| (parameter (property (package infer-sources) true notACookieSource) 0) | (return (property (package infer-sources) true notACookieSource)) |
+| (parameter (property (package infer-sources) true notASink) 0) | (return (property (package infer-sources) true notASink)) |
 | (property (property (return (property (package infer-sources) true createError)) true a) true a) | (property (property (return (property (package infer-sources) true createError)) true a) true a) |
 | (property (property (return (property (package infer-sources) true createError)) true a) true a) | (property (property (return (property (package infer-sources) true createError)) true a) true b) |
 | (property (property (return (property (package infer-sources) true createError)) true a) true a) | (property (property (return (property (package infer-sources) true createError)) true b) true a) |
