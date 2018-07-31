@@ -1,5 +1,6 @@
 | (member (instance (member (root https://www.npmjs.com/package/m2) default)) name) | src/m2/main.js:8:17:8:20 | name | true |
 | (member (member (parameter (member (root https://www.npmjs.com/package/m2) foo) 0) x) y) | src/m3/tst2.js:3:6:3:8 | "?" | false |
+| (member (member (root https://www.npmjs.com/package/m2) default) m) | src/m2/main.js:11:4:13:3 | (x) {\\n  ... e);\\n  } | true |
 | (member (member (root https://www.npmjs.com/package/m2) default) s) | src/m2/main.js:15:11:15:27 | (y) { return y; } | true |
 | (member (parameter (member (root https://www.npmjs.com/package/m2) foo) 0) x) | src/m3/tst2.js:5:10:5:10 | o | false |
 | (member (parameter (member (root https://www.npmjs.com/package/m2) foo) 0) z) | src/m2/main.js:3:9:3:12 | "hi" | true |

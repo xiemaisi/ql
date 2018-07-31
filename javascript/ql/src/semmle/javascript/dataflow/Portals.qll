@@ -30,7 +30,8 @@ private newtype TPortal =
   or
   MkInstancePortal(Portal base) {
     InstancePortal::instanceUse(base, _, _) or
-    InstancePortal::instanceDef(base, _, _)
+    InstancePortal::instanceDef(base, _, _) or
+    InstancePortal::instanceMemberDef(base, _, _, _)
   }
   or
   MkParameterPortal(Portal base, int i) {
@@ -213,6 +214,8 @@ private module PropertyPortal {
 
   predicate writes(Portal base, string prop, DataFlow::Node rhs, boolean escapes) {
     portalBaseRef(base, escapes).hasPropertyWrite(prop, rhs)
+    or
+    InstancePortal::instanceMemberDef(base, prop, rhs, escapes)
     or
     exists (string pkgName, AnalyzedModule m | m = NpmPackagePortal::packageMain(pkgName) |
       base = MkNpmPackagePortal(pkgName) and
