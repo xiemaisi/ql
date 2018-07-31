@@ -2,7 +2,6 @@
 | (parameter (member (root https://www.npmjs.com/package/infer-sources) codeInjection) 0) | CodeInjection |
 | (parameter (member (root https://www.npmjs.com/package/infer-sources) commandInjection) 0) | CommandInjection |
 | (parameter (member (root https://www.npmjs.com/package/infer-sources) hashPass) 0) | CodeInjection |
-| (parameter (member (root https://www.npmjs.com/package/infer-sources) hashPass) 0) | InsufficientPasswordHash |
 | (parameter (member (root https://www.npmjs.com/package/infer-sources) multiple) 0) | CodeInjection |
 | (parameter (member (root https://www.npmjs.com/package/infer-sources) multiple) 0) | CommandInjection |
 | (parameter (member (root https://www.npmjs.com/package/infer-sources) redirect) 0) | ServerSideUrlRedirect |

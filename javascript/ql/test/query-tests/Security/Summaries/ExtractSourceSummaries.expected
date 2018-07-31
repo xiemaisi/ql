@@ -1,9 +1,6 @@
 | (parameter (parameter (member (root https://www.npmjs.com/package/infer-sources) listen) 0) 0) | ClientSideUrlRedirect |
 | (parameter (parameter (member (root https://www.npmjs.com/package/infer-sources) listen) 0) 0) | CodeInjection |
 | (parameter (parameter (member (root https://www.npmjs.com/package/infer-sources) listen) 0) 0) | CommandInjection |
-| (parameter (parameter (member (root https://www.npmjs.com/package/infer-sources) listen) 0) 0) | ConditionalBypass |
-| (parameter (parameter (member (root https://www.npmjs.com/package/infer-sources) listen) 0) 0) | CorsMisconfigurationForCredentials |
-| (parameter (parameter (member (root https://www.npmjs.com/package/infer-sources) listen) 0) 0) | DifferentKindsComparisonBypass |
 | (parameter (parameter (member (root https://www.npmjs.com/package/infer-sources) listen) 0) 0) | DomBasedXss |
 | (parameter (parameter (member (root https://www.npmjs.com/package/infer-sources) listen) 0) 0) | NosqlInjection |
 | (parameter (parameter (member (root https://www.npmjs.com/package/infer-sources) listen) 0) 0) | ReflectedXss |
@@ -21,8 +18,6 @@
 | (return (member (root https://www.npmjs.com/package/infer-sources) cookieSource)) | ClientSideUrlRedirect |
 | (return (member (root https://www.npmjs.com/package/infer-sources) cookieSource)) | CodeInjection |
 | (return (member (root https://www.npmjs.com/package/infer-sources) cookieSource)) | CommandInjection |
-| (return (member (root https://www.npmjs.com/package/infer-sources) cookieSource)) | ConditionalBypass |
-| (return (member (root https://www.npmjs.com/package/infer-sources) cookieSource)) | CorsMisconfigurationForCredentials |
 | (return (member (root https://www.npmjs.com/package/infer-sources) cookieSource)) | DomBasedXss |
 | (return (member (root https://www.npmjs.com/package/infer-sources) cookieSource)) | NosqlInjection |
 | (return (member (root https://www.npmjs.com/package/infer-sources) cookieSource)) | ReflectedXss |

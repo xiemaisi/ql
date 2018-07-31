@@ -15,5 +15,7 @@ from TaintTracking::Configuration cfg, DataFlow::PathNode source, DataFlow::Path
 where cfg.hasPathFlow(source, sink) and
       p = sink.getNode().(PortalEntrySink).getPortal() and
       // avoid constructing infeasible paths
-      sink.getPathSummary().hasCall() = false
+      sink.getPathSummary().hasCall() = false and
+      // exclude uninteresting and noisy configurations
+      cfg != "LocationHrefDataFlowConfiguration"
 select p, cfg.toString()

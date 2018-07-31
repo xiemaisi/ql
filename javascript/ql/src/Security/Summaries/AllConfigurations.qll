@@ -4,22 +4,13 @@
 
 import javascript
 
-import semmle.javascript.security.dataflow.BrokenCryptoAlgorithm
-import semmle.javascript.security.dataflow.CleartextStorage
 import semmle.javascript.security.dataflow.ClientSideUrlRedirect
 import semmle.javascript.security.dataflow.CodeInjection
 import semmle.javascript.security.dataflow.CommandInjection
-import semmle.javascript.security.dataflow.ConditionalBypass
-import semmle.javascript.security.dataflow.CorsMisconfigurationForCredentials
-import semmle.javascript.security.dataflow.DifferentKindsComparisonBypass
 import semmle.javascript.security.dataflow.DomBasedXss as DomBasedXss
-import semmle.javascript.security.dataflow.HardcodedCredentials
-import semmle.javascript.security.dataflow.InsecureRandomness
-import semmle.javascript.security.dataflow.InsufficientPasswordHash
 import semmle.javascript.security.dataflow.NosqlInjection
 import semmle.javascript.security.dataflow.ReflectedXss as ReflectedXss
 import semmle.javascript.security.dataflow.RegExpInjection
-import semmle.javascript.security.dataflow.RemotePropertyInjection
 import semmle.javascript.security.dataflow.ServerSideUrlRedirect
 import semmle.javascript.security.dataflow.SqlInjection
 import semmle.javascript.security.dataflow.StackTraceExposure
