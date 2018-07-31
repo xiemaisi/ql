@@ -18,24 +18,24 @@ private newtype TPortal =
     NpmPackagePortal::exports(pkgName, _)
   }
   or
-  MkPortalProperty(Portal base, boolean isStatic, string prop) {
+  MkPropertyPortal(Portal base, boolean isStatic, string prop) {
     (
-     PortalProperty::reads(base, isStatic, prop, _, _) or
-     PortalProperty::writes(base, isStatic, prop, _, _)
+     PropertyPortal::reads(base, isStatic, prop, _, _) or
+     PropertyPortal::writes(base, isStatic, prop, _, _)
     ) and
     // only consider alpha-numeric properties, excluding special properties
     // and properties whose names look like they are meant to be internal
     prop.regexpMatch("(?!prototype$|__)[a-zA-Z_]\\w*")
   }
   or
-  MkPortalParameter(Portal base, int i) {
-    PortalParameter::parameter(base, i, _, _) or
-    PortalParameter::argument(base, i, _, _)
+  MkParameterPortal(Portal base, int i) {
+    ParameterPortal::parameter(base, i, _, _) or
+    ParameterPortal::argument(base, i, _, _)
   }
   or
-  MkPortalReturn(Portal base) {
-    PortalReturn::calls(_, base, _) or
-    PortalReturn::returns(base, _, _)
+  MkReturnPortal(Portal base) {
+    ReturnPortal::calls(_, base, _) or
+    ReturnPortal::returns(base, _, _)
   }
 
 /**
@@ -98,7 +98,7 @@ private class NpmPackagePortal extends Portal, MkNpmPackagePortal {
     escapes = true
   }
 
-  override string toString() { result = "(package " + pkgName + ")" }
+  override string toString() { result = "(root https://www.npmjs.com/package/" + pkgName + ")" }
 
   override int depth() { result = 1 }
 }
@@ -120,10 +120,23 @@ private module NpmPackagePortal {
     )
   }
 
+  Module packageMain(string pkgName) {
+    exists (PackageJSON pkg |
+      // don't construct portals for private packages
+      not pkg.isPrivate() and
+      // don't construct portals for vendored-in packages
+      exists (Folder pkgDir | pkgDir = pkg.getFile().getParentContainer() |
+        pkgDir.getRelativePath() = ""
+        or
+        not pkgDir.getParentContainer().getBaseName() = "node_modules"
+      ) and
+      pkg.getPackageName() = pkgName and
+      result = pkg.getMainModule()
+    )
+  }
+
   predicate exports(string pkgName, DataFlow::Node exp) {
-    exists (PackageJSON pkg, Module m |
-      not pkg.isPrivate() and pkg.getPackageName() = pkgName and
-      m = pkg.getMainModule() |
+    exists (Module m | m = packageMain(pkgName) |
       exists (AnalyzedPropertyWrite apw |
         apw.writes(m.(AnalyzedModule).getModuleObject(), "exports", exp)
       )
@@ -160,24 +173,24 @@ private abstract class CompoundPortal extends Portal {
 /**
  * A portal corresponding to a named property of another portal.
  */
-private class PortalProperty extends CompoundPortal, MkPortalProperty {
+private class PropertyPortal extends CompoundPortal, MkPropertyPortal {
   boolean isStatic;
   string prop;
 
-  PortalProperty() { this = MkPortalProperty(base, isStatic, prop) }
+  PropertyPortal() { this = MkPropertyPortal(base, isStatic, prop) }
 
   override DataFlow::SourceNode getAnExitNode(boolean isUserControlled) {
-    PortalProperty::reads(base, isStatic, prop, result, isUserControlled)
+    PropertyPortal::reads(base, isStatic, prop, result, isUserControlled)
   }
 
   override DataFlow::Node getAnEntryNode(boolean escapes) {
-    PortalProperty::writes(base, isStatic, prop, result, escapes)
+    PropertyPortal::writes(base, isStatic, prop, result, escapes)
   }
 
-  override string toString() { result = "(property " + base + " " + isStatic + " " + prop + ")" }
+  override string toString() { result = "(member " + base + " " + isStatic + " " + prop + ")" }
 }
 
-private module PortalProperty {
+private module PropertyPortal {
   private predicate portalInstanceAccess(Portal base, DataFlow::SourceNode nd, boolean isUserControlled) {
     exists (AbstractInstance i |
       base.getAnEntryNode(isUserControlled).getALocalSource() = DataFlow::valueNode(i.getConstructor().getDefinition()) and
@@ -212,9 +225,8 @@ private module PortalProperty {
   predicate writes(Portal base, boolean isStatic, string prop, DataFlow::Node rhs, boolean escapes) {
     portalBaseRef(base, isStatic, escapes).hasPropertyWrite(prop, rhs)
     or
-    exists (PackageJSON pkg, AnalyzedModule m |
-      not pkg.isPrivate() and base = MkNpmPackagePortal(pkg.getPackageName()) and
-      m = pkg.getMainModule() |
+    exists (string pkgName, AnalyzedModule m | m = NpmPackagePortal::packageMain(pkgName) |
+      base = MkNpmPackagePortal(pkgName) and
       exists (AnalyzedPropertyWrite apw |
         apw.writes(m.(AnalyzedModule).getAnExportsValue(), prop, rhs)
       ) and
@@ -227,23 +239,23 @@ private module PortalProperty {
 /**
  * A portal corresponding to a positional parameter of another portal.
  */
-private class PortalParameter extends CompoundPortal, MkPortalParameter {
+private class ParameterPortal extends CompoundPortal, MkParameterPortal {
   int i;
 
-  PortalParameter() { this = MkPortalParameter(base, i) }
+  ParameterPortal() { this = MkParameterPortal(base, i) }
 
   override DataFlow::SourceNode getAnExitNode(boolean isUserControlled) {
-    PortalParameter::parameter(base, i, result, isUserControlled)
+    ParameterPortal::parameter(base, i, result, isUserControlled)
   }
 
   override DataFlow::Node getAnEntryNode(boolean escapes) {
-    PortalParameter::argument(base, i, result, escapes)
+    ParameterPortal::argument(base, i, result, escapes)
   }
 
   override string toString() { result = "(parameter " + base + " " + i + ")" }
 }
 
-private module PortalParameter {
+private module ParameterPortal {
   predicate parameter(Portal base, int i, DataFlow::SourceNode param, boolean isUserControlled) {
     param = base.getAnEntryNode(isUserControlled).getALocalSource().(DataFlow::FunctionNode).getParameter(i)
   }
@@ -259,21 +271,21 @@ private module PortalParameter {
 /**
  * A portal corresponding to the return value of another portal.
  */
-private class PortalReturn extends CompoundPortal, MkPortalReturn {
-  PortalReturn() { this = MkPortalReturn(base) }
+private class ReturnPortal extends CompoundPortal, MkReturnPortal {
+  ReturnPortal() { this = MkReturnPortal(base) }
 
   override DataFlow::SourceNode getAnExitNode(boolean isUserControlled) {
-    PortalReturn::calls(result, base, isUserControlled)
+    ReturnPortal::calls(result, base, isUserControlled)
   }
 
   override DataFlow::Node getAnEntryNode(boolean escapes) {
-    PortalReturn::returns(base, result, escapes)
+    ReturnPortal::returns(base, result, escapes)
   }
 
   override string toString() { result = "(return " + base + ")" }
 }
 
-private module PortalReturn {
+private module ReturnPortal {
   predicate calls(DataFlow::InvokeNode invk, Portal callee, boolean isUserControlled) {
     invk = callee.getAnExitNode(isUserControlled).getAnInvocation()
   }
