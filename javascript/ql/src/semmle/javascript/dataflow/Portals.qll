@@ -15,7 +15,8 @@ private newtype TPortal =
   MkNpmPackagePortal(string pkgName) {
     NpmPackagePortal::imports(_, pkgName) or
     NpmPackagePortal::imports(_, pkgName, _) or
-    NpmPackagePortal::exports(pkgName, _)
+    NpmPackagePortal::exports(pkgName, _) or
+    PropertyPortal::exports(pkgName, _, _)
   }
   or
   MkPropertyPortal(Portal base, string prop) {
@@ -212,16 +213,21 @@ private module PropertyPortal {
     )
   }
 
+  predicate exports(string pkgName, string prop, DataFlow::Node rhs) {
+    exists (AnalyzedModule m, AnalyzedPropertyWrite apw |
+      m = NpmPackagePortal::packageMain(pkgName) and
+      apw.writes(m.getAnExportsValue(), prop, rhs)
+    )
+  }
+
   predicate writes(Portal base, string prop, DataFlow::Node rhs, boolean escapes) {
     portalBaseRef(base, escapes).hasPropertyWrite(prop, rhs)
     or
     InstancePortal::instanceMemberDef(base, prop, rhs, escapes)
     or
-    exists (string pkgName, AnalyzedModule m | m = NpmPackagePortal::packageMain(pkgName) |
+    exists (string pkgName |
+      exports(pkgName, prop, rhs) and
       base = MkNpmPackagePortal(pkgName) and
-      exists (AnalyzedPropertyWrite apw |
-        apw.writes(m.(AnalyzedModule).getAnExportsValue(), prop, rhs)
-      ) and
       escapes = true
     )
   }

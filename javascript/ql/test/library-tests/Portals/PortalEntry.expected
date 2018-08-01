@@ -6,6 +6,7 @@
 | (member (parameter (member (root https://www.npmjs.com/package/m2) foo) 0) z) | src/m2/main.js:3:9:3:12 | "hi" | true |
 | (member (root https://www.npmjs.com/package/m2) default) | src/m2/main.js:6:16:16:1 | class { ...  y; }\\n} | true |
 | (member (root https://www.npmjs.com/package/m2) foo) | src/m2/main.js:1:8:4:1 | functio ... "hi";\\n} | true |
+| (member (root https://www.npmjs.com/package/m4) foo) | src/m4/index.js:1:15:1:28 | function(x) {} | true |
 | (parameter (member (instance (member (root https://www.npmjs.com/package/m2) default)) m) 0) | src/m3/tst3.js:4:15:4:18 | "hi" | false |
 | (parameter (member (instance (member (root https://www.npmjs.com/package/m2) default)) s) 0) | src/m3/tst3.js:5:15:5:21 | "there" | false |
 | (parameter (member (instance (root https://www.npmjs.com/package/m2)) m) 0) | src/m3/tst3.js:4:15:4:18 | "hi" | false |
