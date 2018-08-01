@@ -1,0 +1,5 @@
++ semmlecode-javascript-queries/Security/Summaries/ExtractSourceSummaries.ql
+    @_namespace com.lgtm/javascript-queries
++ semmlecode-javascript-queries/Security/Summaries/ExtractSinkSummaries.ql
+    @_namespace com.lgtm/javascript-queries
+
