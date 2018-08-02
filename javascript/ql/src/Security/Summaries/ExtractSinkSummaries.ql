@@ -3,7 +3,7 @@
  * @description Extracts sink summaries, that is, pairs `(p, cfg)` such that taint may flow
  *              from a user-controlled exit node of portal `p` to a known sink for
  *              configuration `cfg`.
- * @kind table
+ * @kind additional-flow-sinks
  * @id js/sink-summary-extraction
  */
 
@@ -18,4 +18,4 @@ where cfg.hasPathFlow(source, sink) and
       sink.getPathSummary().hasReturn() = false and
       // exclude uninteresting and noisy configurations
       cfg != "LocationHrefDataFlowConfiguration"
-select p, cfg.toString()
+select p.toString(), cfg.toString()

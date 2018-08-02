@@ -3,7 +3,7 @@
  * @description Extracts source summaries, that is, pairs `(p, cfg)` such that taint may flow
  *              from a known source for configuration `cfg` to an escaping entry node of
  *              portal `p`.
- * @kind table
+ * @kind additional-flow-sources
  * @id js/source-summary-extraction
  */
 
@@ -18,4 +18,4 @@ where cfg.hasPathFlow(source, sink) and
       sink.getPathSummary().hasCall() = false and
       // exclude uninteresting and noisy configurations
       cfg != "LocationHrefDataFlowConfiguration"
-select p, cfg.toString()
+select p.toString(), cfg.toString()
