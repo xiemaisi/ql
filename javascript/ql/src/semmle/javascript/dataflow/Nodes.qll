@@ -367,15 +367,10 @@ class ModuleImportNode extends DataFlow::DefaultSourceNode {
     )
     or
     // `import * as http from 'http'` or `import http from `http`'
-    exists (ImportDeclaration id, ImportSpecifier is, SsaExplicitDefinition ssa |
-      id.getImportedPath().getValue() = path and
-      is = id.getASpecifier() and
-      ssa.getDef() = is and
-      this = DataFlow::ssaDefinitionNode(ssa) |
-      is instanceof ImportNamespaceSpecifier and
-      count(id.getASpecifier()) = 1
+    exists (DataFlow::ImportNode imp | imp.getImportedPath() = path |
+      this = imp
       or
-      is.getImportedName() = "default"
+      this = imp.getAPropertyRead("default")
     )
     or
     // declared AMD dependency
@@ -413,12 +408,4 @@ ModuleImportNode moduleImport(string path) {
  */
 DataFlow::SourceNode moduleMember(string path, string m) {
   result = moduleImport(path).getAPropertyRead(m)
-  or
-  exists (ImportDeclaration id, ImportSpecifier is, SsaExplicitDefinition ssa |
-    id.getImportedPath().getValue() = path and
-    is = id.getASpecifier() and
-    is.getImportedName() = m and
-    ssa.getDef() = is and
-    result = DataFlow::ssaDefinitionNode(ssa)
-  )
 }
