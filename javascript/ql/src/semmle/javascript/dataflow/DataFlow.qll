@@ -38,6 +38,7 @@ module DataFlow {
        iterator(_, iteratesKeys, lhs, iterand)
      }
   or TImplicitEnumInit(EnumMember en) { not exists(en.getInitializer()) }
+  or TImportNode(ImportDeclaration id)
 
   predicate iterator(Expr iter, boolean iteratesKeys, Expr lhs, Expr iterand) {
     exists (EnhancedForLoop fis |
@@ -529,6 +530,48 @@ module DataFlow {
   }
 
   /**
+   * A node in the data flow graph which corresponds to an ES2015 import declaration.
+   *
+   * Import specifiers are viewed as property reads on the result of this node.
+   */
+  class ImportNode extends DefaultSourceNode, TImportNode {
+    ImportDeclaration decl;
+
+    ImportNode() {
+      this = TImportNode(decl)
+    }
+
+    ImportDeclaration getDeclaration() {
+      result = decl
+    }
+
+    /** Gets the path expression of this import. */
+    PathExpr getImportedPathExpr() {
+      result = decl.getImportedPath()
+    }
+
+    /** Gets the (unresolved) path imported by this import. */
+    string getImportedPath() {
+      result = getImportedPathExpr().getValue()
+    }
+
+    override predicate hasLocationInfo(string filepath, int startline, int startcolumn,
+                                       int endline, int endcolumn) {
+      exists (Location loc | loc = getImportedPathExpr().getLocation() |
+        loc.hasLocationInfo(filepath, startline, startcolumn, endline, endcolumn)
+      )
+    }
+
+    override string toString() {
+      result = "import " + getImportedPath()
+    }
+
+    override ASTNode getAstNode() {
+      result = getImportedPathExpr()
+    }
+  }
+
+  /**
    * A data flow node that reads or writes an object property or class member.
    *
    * The default subclasses do not model global variable references or variable
@@ -803,6 +846,26 @@ module DataFlow {
     override Expr getPropertyNameExpr() { none() }
 
     override string getPropertyName() { none() }
+  }
+
+  class ImportSpecifierAsPropRead extends PropRead, SsaDefinitionNode {
+    override SsaExplicitDefinition ssa;
+    ImportSpecifier spec;
+
+    ImportSpecifierAsPropRead() {
+      spec = ssa.getDef() and
+      not spec instanceof ImportNamespaceSpecifier
+    }
+
+    ImportSpecifier getSpecifier() {
+      result = spec
+    }
+
+    override DataFlow::Node getBase() { result = TImportNode(spec.getImportDeclaration()) }
+
+    override Expr getPropertyNameExpr() { result = spec.getImported() }
+
+    override string getPropertyName() { result = spec.getImportedName() }
   }
 
   /**

@@ -135,6 +135,28 @@ private module Impl {
     }
   }
 
+  class ImportSpecifierVarDef extends VarDefImpl {
+    ImportSpecifier is;
+
+    ImportSpecifierVarDef() {
+      this = is
+    }
+
+    override Expr getLhs() {
+      result = is.getLocal()
+    }
+
+    override DataFlow::Node getRhsNode() {
+      if is instanceof ImportNamespaceSpecifier then
+        // for namespace imports, the entire import is the rhs
+        result.(DataFlow::ImportNode).getDeclaration() = is.getImportDeclaration()
+      else
+        // for symbol imports, the specifier itself (which is interpreted as a
+        // property read) is the rhs
+        result.(DataFlow::ImportSpecifierAsPropRead).getSpecifier() = is
+    }
+  }
+
   /**
    * <table border="1">
    * <tr><th>Example<th><code>def</code><th><code>lhs</code></tr>
@@ -151,8 +173,6 @@ private module Impl {
     Expr lhs;
 
     VarDefWithoutSyntacticRhs() {
-      lhs = this.(ImportSpecifier).getLocal()
-      or
       lhs = this and
       this instanceof Parameter
     }

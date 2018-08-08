@@ -198,5 +198,7 @@ class DefaultSourceNode extends SourceNode {
     DataFlow::parameterNode(this, _)
     or
     this instanceof DataFlow::Impl::InvokeNodeDef
+    or
+    this instanceof DataFlow::ImportNode
   }
 }
