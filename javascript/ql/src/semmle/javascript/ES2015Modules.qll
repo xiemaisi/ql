@@ -128,6 +128,11 @@ class ImportSpecifier extends Expr, @importspecifier {
   VarDecl getLocal() {
     result = getChildExpr(1)
   }
+
+  /** Gets the import declaration to which this specifier belongs. */
+  ImportDeclaration getImportDeclaration() {
+    this = result.getASpecifier()
+  }
 }
 
 /** A named import specifier. */

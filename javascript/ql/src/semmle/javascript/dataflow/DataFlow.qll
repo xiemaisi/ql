@@ -32,6 +32,7 @@ module DataFlow {
   or TReflectiveCallNode(MethodCallExpr ce, string kind) {
        ce.getMethodName() = kind and (kind = "call" or kind = "apply")
      }
+  or TImportNode(ImportDeclaration id)
 
   /**
    * A node in the data flow graph.
@@ -394,6 +395,44 @@ module DataFlow {
   }
 
   /**
+   * A node in the data flow graph which corresponds to an ES2015 import declaration.
+   *
+   * Import specifiers are viewed as property reads on the result of this node.
+   */
+  class ImportNode extends DefaultSourceNode, TImportNode {
+    ImportDeclaration decl;
+
+    ImportNode() {
+      this = TImportNode(decl)
+    }
+
+    /** Gets the path expression of this import. */
+    PathExpr getImportedPathExpr() {
+      result = decl.getImportedPath()
+    }
+
+    /** Gets the (unresolved) path imported by this import. */
+    string getImportedPath() {
+      result = getImportedPathExpr().getValue()
+    }
+
+    override predicate hasLocationInfo(string filepath, int startline, int startcolumn,
+                                       int endline, int endcolumn) {
+      exists (Location loc | loc = getImportedPathExpr().getLocation() |
+        loc.hasLocationInfo(filepath, startline, startcolumn, endline, endcolumn)
+      )
+    }
+
+    override string toString() {
+      result = "import " + getImportedPath()
+    }
+
+    override ASTNode getAstNode() {
+      result = getImportedPathExpr()
+    }
+  }
+
+  /**
    * A data flow node that reads or writes an object property or class member.
    *
    * The default subclasses do not model global variable references or variable
@@ -668,6 +707,22 @@ module DataFlow {
     override Expr getPropertyNameExpr() { none() }
 
     override string getPropertyName() { none() }
+  }
+
+  private class ImportSpecifierAsPropRead extends PropRead, SsaDefinitionNode {
+    override SsaExplicitDefinition ssa;
+    ImportSpecifier spec;
+
+    ImportSpecifierAsPropRead() {
+      spec = ssa.getDef() and
+      not spec instanceof ImportNamespaceSpecifier
+    }
+
+    override DataFlow::Node getBase() { result = TImportNode(spec.getImportDeclaration()) }
+
+    override Expr getPropertyNameExpr() { result = spec.getImported() }
+
+    override string getPropertyName() { result = spec.getImportedName() }
   }
 
   /**
@@ -967,7 +1022,7 @@ module DataFlow {
     or
     exists (VarDef def |
       // from `e` to `{ p: x }` in `{ p: x } = e`
-      pred = valueNode(defSourceNode(def)) and
+      pred = defSourceNode(def) and
       succ = TDestructuringPatternNode(def.getTarget())
     )
   }
@@ -976,8 +1031,10 @@ module DataFlow {
    * Gets the data flow node representing the source of definition `def`, taking
    * flow through IIFE calls into account.
    */
-  private AST::ValueNode defSourceNode(VarDef def) {
-    result = def.getSource() or localArgumentPassing(result, def)
+  private Node defSourceNode(VarDef def) {
+    result = valueNode(def.getSource()) or
+    localArgumentPassing(result.asExpr(), def) or
+    result = TImportNode(def.(ImportNamespaceSpecifier).getImportDeclaration())
   }
 
   /**
@@ -989,7 +1046,7 @@ module DataFlow {
       lhs = def.getTarget() and r = lhs.getABindingVarRef() and r.getVariable() = v |
       // follow one step of the def-use chain if the lhs is a simple variable reference
       lhs = r and
-      result = TValueNode(defSourceNode(def))
+      result = defSourceNode(def)
       or
       // handle destructuring assignments
       exists (PropertyPattern pp | r = pp.getValuePattern() |
