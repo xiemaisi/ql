@@ -736,7 +736,7 @@ module DataFlow {
       }
 
       override DataFlow::Node getCalleeNode() {
-        result = DataFlow::valueNode(astNode.getCallee())
+        result = DataFlow::valueNode(astNode.getCallee().stripParens())
       }
 
       override DataFlow::Node getArgument(int i) {

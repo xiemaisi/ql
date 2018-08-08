@@ -124,11 +124,8 @@ abstract class SourceNode extends DataFlow::Node {
    * that is, `o.m(...)` or `o[p](...)`.
    */
   DataFlow::CallNode getAMethodCall(string methodName) {
-    exists (PropAccess pacc |
-      pacc = result.getCalleeNode().asExpr().stripParens() and
-      flowsToExpr(pacc.getBase()) and
-      pacc.getPropertyName() = methodName
-    )
+    result = getAMemberCall(methodName) and
+    result.getCalleeNode().asExpr() instanceof PropAccess
   }
 
   /**
