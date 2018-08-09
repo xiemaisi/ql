@@ -7,7 +7,7 @@
  * @id js/source-summary-extraction
  */
 
-import AllConfigurations
+import Shared
 import PortalEntrySink
 
 from TaintTracking::Configuration cfg, DataFlow::PathNode source, DataFlow::PathNode sink,
