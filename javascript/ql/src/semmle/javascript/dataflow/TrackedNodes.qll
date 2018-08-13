@@ -142,8 +142,20 @@ private module NodeTracking {
     or
     exists (DataFlow::Node mid, PathSummary oldSummary, PathSummary newSummary |
       reachableFromInput(f, invk, input, mid, oldSummary) and
-      flowStep(mid, nd, newSummary) and
-      summary = oldSummary.append(newSummary)
+      extendingFlowStep(mid, oldSummary, nd, newSummary)
+    )
+  }
+
+  /**
+   * Holds if there is a (value-preserving) flow step from `pred` to `succ` under `cfg`, and
+   * the path summary of that step can be appended to `oldSummary` to yield `newSummary`.
+   */
+  pragma[noinline]
+  private predicate extendingFlowStep(DataFlow::Node pred,
+                      PathSummary oldSummary, DataFlow::Node succ, PathSummary newSummary) {
+    exists (PathSummary stepSummary |
+      flowStep(pred, succ, stepSummary) and
+      newSummary = oldSummary.append(stepSummary)
     )
   }
 
@@ -186,8 +198,7 @@ private module NodeTracking {
     or
     exists (DataFlow::Node mid, PathSummary oldSummary, PathSummary newSummary |
       reachableFromStoreBase(prop, rhs, mid, oldSummary) and
-      flowStep(mid, nd, newSummary) and
-      summary = oldSummary.append(newSummary)
+      extendingFlowStep(mid, oldSummary, nd, newSummary)
     )
   }
 
