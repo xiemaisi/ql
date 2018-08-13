@@ -141,6 +141,12 @@ abstract class PrimitiveAbstractValue extends DefiniteAbstractValue {
 }
 
 /**
+ * A definite abstract value that represents an object.
+ */
+abstract class AbstractObjectValue extends DefiniteAbstractValue {
+}
+
+/**
  * An abstract value representing `null`.
  */
 class AbstractNull extends PrimitiveAbstractValue, TAbstractNull {
@@ -235,7 +241,7 @@ class AbstractRegExp extends DefiniteAbstractValue, TAbstractRegExp {
 /**
  * An abstract value representing a function or class.
  */
-abstract class AbstractCallable extends DefiniteAbstractValue {
+abstract class AbstractCallable extends AbstractObjectValue {
   /**
    * Gets the function represented by this abstract value.
    */
@@ -294,7 +300,7 @@ class AbstractDate extends DefiniteAbstractValue, TAbstractDate {
 /**
  * An abstract value representing an `arguments` object.
  */
-class AbstractArguments extends DefiniteAbstractValue, TAbstractArguments {
+class AbstractArguments extends AbstractObjectValue, TAbstractArguments {
   /** Gets the function whose `arguments` object this is an abstraction of. */
   Function getFunction() {
     this = TAbstractArguments(result)
@@ -313,7 +319,7 @@ class AbstractArguments extends DefiniteAbstractValue, TAbstractArguments {
 /**
  * An abstract value representing the global object.
  */
-class AbstractGlobalObject extends DefiniteAbstractValue, TAbstractGlobalObject {
+class AbstractGlobalObject extends AbstractObjectValue, TAbstractGlobalObject {
   override boolean getBooleanValue() { result = true }
   override InferredType getType() { result = TTObject() }
   override predicate isCoercibleToNumber() { none() }
@@ -324,7 +330,7 @@ class AbstractGlobalObject extends DefiniteAbstractValue, TAbstractGlobalObject 
 /**
  * An abstract value representing a CommonJS `module` object.
  */
-class AbstractModuleObject extends DefiniteAbstractValue, TAbstractModuleObject {
+class AbstractModuleObject extends AbstractObjectValue, TAbstractModuleObject {
   /** Gets the module whose `module` object this abstract value represents. */
   Module getModule() { this = TAbstractModuleObject(result) }
   override boolean getBooleanValue() { result = true }
@@ -340,7 +346,7 @@ class AbstractModuleObject extends DefiniteAbstractValue, TAbstractModuleObject 
 /**
  * An abstract value representing a CommonJS `exports` object.
  */
-class AbstractExportsObject extends DefiniteAbstractValue, TAbstractExportsObject {
+class AbstractExportsObject extends AbstractObjectValue, TAbstractExportsObject {
   /** Gets the module whose `exports` object this abstract value represents. */
   Module getModule() { this = TAbstractExportsObject(result) }
   override boolean getBooleanValue() { result = true }
@@ -357,7 +363,7 @@ class AbstractExportsObject extends DefiniteAbstractValue, TAbstractExportsObjec
  * An abstract value representing all objects arising from an object literal expression
  * (allocation site abstraction).
  */
-class AbstractObjectLiteral extends DefiniteAbstractValue, TAbstractObjectLiteral {
+class AbstractObjectLiteral extends AbstractObjectValue, TAbstractObjectLiteral {
   /** Gets the object expression this abstract value represents. */
   ObjectExpr getObjectExpr() { this = TAbstractObjectLiteral(result) }
   override boolean getBooleanValue() { result = true }
@@ -375,7 +381,7 @@ class AbstractObjectLiteral extends DefiniteAbstractValue, TAbstractObjectLitera
  * as well as the default prototype of `F` (that is, the initial value of
  * `F.prototype`).
  */
-class AbstractInstance extends DefiniteAbstractValue, TAbstractInstance {
+class AbstractInstance extends AbstractObjectValue, TAbstractInstance {
   /** Gets the constructor of this instance. */
   AbstractCallable getConstructor() { this = TAbstractInstance(result) }
   override boolean getBooleanValue() { result = true }
