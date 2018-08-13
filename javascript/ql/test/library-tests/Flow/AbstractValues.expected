@@ -211,6 +211,13 @@
 | objlit.js:41:10:41:22 | anonymous function |
 | objlit.js:41:10:41:22 | instance of anonymous function |
 | objlit.js:43:12:45:3 | object literal |
+| prototype.js:1:1:4:1 | function App |
+| prototype.js:1:1:4:1 | instance of function App |
+| prototype.js:6:17:10:1 | object literal |
+| prototype.js:7:8:9:3 | instance of method foo |
+| prototype.js:7:8:9:3 | method foo |
+| prototype.js:12:21:14:1 | anonymous function |
+| prototype.js:12:21:14:1 | instance of anonymous function |
 | reexport-d.js:1:1:2:0 | exports object of module reexport-d |
 | reexport-d.js:1:1:2:0 | module object of module reexport-d |
 | reexport-mixins.js:1:1:4:0 | exports object of module reexport-mixins |

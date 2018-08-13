@@ -65,9 +65,16 @@ private class AnalyzedPropertyAccess extends AnalyzedPropertyRead, DataFlow::Val
   }
 
   override predicate reads(AbstractValue base, string prop) {
-    base = baseNode.getALocalValue() and
+    base = getAProtoStar(baseNode.getALocalValue()) and
     prop = propName
   }
+}
+
+/**
+ * Gets the (reflexive, transitive) prototype of `obj`.
+ */
+private AbstractObjectValue getAProtoStar(AbstractObjectValue obj) {
+  result = obj or result = getAProtoStar(obj.getAPrototype())
 }
 
 /**

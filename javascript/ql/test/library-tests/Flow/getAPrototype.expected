@@ -4,3 +4,4 @@
 | instances.js:13:1:13:18 | instance of function SubA | instances.js:13:1:13:18 | instance of function SubA |
 | objlit.js:43:12:45:3 | object literal | file://:0:0:0:0 | null |
 | objlit.js:43:12:45:3 | object literal | objlit.js:33:12:40:3 | object literal |
+| prototype.js:1:1:4:1 | instance of function App | prototype.js:6:17:10:1 | object literal |
