@@ -192,7 +192,11 @@ predicate globalPropertyRead(GlobalVariable gv, File f, string prop, DataFlow::N
  * read of the same property from the same global variable in the same file.
  */
 predicate basicStoreStep(DataFlow::Node pred, DataFlow::Node succ, string prop) {
-  succ.(DataFlow::SourceNode).hasPropertyWrite(prop, pred)
+  exists (DataFlow::SourceNode src |
+    src = succ and
+    not exists(src.getAPredecessor()) and
+    src.hasPropertyWrite(prop, pred)
+  )
   or
   exists (GlobalVariable gv, File f |
     globalPropertyWrite(gv, f, prop, pred) and
