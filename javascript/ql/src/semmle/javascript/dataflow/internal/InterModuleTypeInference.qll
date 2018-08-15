@@ -140,13 +140,11 @@ private predicate incompleteExport(ES2015Module m, string y) {
  * properties of the `module.exports` object of the imported module.
  */
 private class AnalyzedImport extends AnalyzedPropertyRead, DataFlow::ValueNode {
+  override ImportSpecifier astNode;
   Module imported;
 
   AnalyzedImport() {
-    exists (ImportDeclaration id |
-      astNode = id.getASpecifier() and
-      imported = id.getImportedModule()
-    )
+    imported = astNode.getImportDeclaration().getImportedModule()
   }
 
   /** Gets the import specifier being analyzed. */
@@ -154,27 +152,30 @@ private class AnalyzedImport extends AnalyzedPropertyRead, DataFlow::ValueNode {
     result = astNode
   }
 
+  pragma[noinline]
+  private predicate importsFrom(AbstractProperty exports, string propName) {
+    exports = MkAbstractProperty(TAbstractModuleObject(imported), "exports") and
+    propName = astNode.getImportedName()
+  }
+
   override predicate reads(AbstractValue base, string propName) {
     exists (AbstractProperty exports |
-      exports = MkAbstractProperty(TAbstractModuleObject(imported), "exports") |
-      base = exports.getALocalValue() and
-      propName = astNode.(ImportSpecifier).getImportedName()
+      importsFrom(exports, propName) and
+      base = exports.getALocalValue()
     )
-    or
-    // when importing CommonJS/AMD modules from ES2015, `module.exports` appears
-    // as the default export
-    not imported instanceof ES2015Module and
-    astNode.(ImportSpecifier).getImportedName() = "default" and
-    base = TAbstractModuleObject(imported) and
-    propName = "exports"
   }
 }
 
 /**
- * Flow analysis for namespace imports.
+ * Flow analysis for namespace imports and default imports from CommonJS/AMD modules.
  */
 private class AnalyzedNamespaceImport extends AnalyzedImport {
-  override ImportNamespaceSpecifier astNode;
+  AnalyzedNamespaceImport() {
+    astNode instanceof ImportNamespaceSpecifier
+    or
+    astNode.getImportedName() = "default" and
+    (imported instanceof NodeModule or imported instanceof AMDModule)
+  }
 
   override predicate reads(AbstractValue base, string propName) {
     base = TAbstractModuleObject(imported) and

@@ -22,24 +22,13 @@ abstract class AnalyzedPropertyRead extends DataFlow::AnalyzedNode {
   abstract predicate reads(AbstractValue base, string propName);
 
   override AbstractValue getAValue() {
-    result = getASourceProperty().getAValue() or
+    result = getASourcePropertyValue(this) or
     result = DataFlow::AnalyzedNode.super.getAValue()
   }
 
   override AbstractValue getALocalValue() {
-    result = getASourceProperty().getALocalValue() or
+    result = getASourcePropertyLocalValue(this) or
     result = DataFlow::AnalyzedNode.super.getALocalValue()
-  }
-
-  /**
-   * Gets an abstract property representing one of the concrete properties that
-   * this read may refer to.
-   */
-  pragma[noinline]
-  private AbstractProperty getASourceProperty() {
-    exists (AbstractValue base, string prop | reads(base, prop) |
-      result = MkAbstractProperty(base, prop)
-    )
   }
 
   override predicate isIncomplete(DataFlow::Incompleteness cause) {
@@ -48,6 +37,23 @@ abstract class AnalyzedPropertyRead extends DataFlow::AnalyzedNode {
       base.isIndefinite(cause)
     )
   }
+}
+
+pragma[noinline]
+private AbstractProperty getASourceProperty(AnalyzedPropertyRead apr) {
+  exists (AbstractValue base, string prop | apr.reads(base, prop) |
+    result = MkAbstractProperty(base, prop)
+  )
+}
+
+pragma[noinline]
+private AbstractValue getASourcePropertyValue(AnalyzedPropertyRead apr) {
+  result = getASourceProperty(apr).getAValue()
+}
+
+pragma[noinline]
+private AbstractValue getASourcePropertyLocalValue(AnalyzedPropertyRead apr) {
+  result = getASourceProperty(apr).getALocalValue()
 }
 
 /**
