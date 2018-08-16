@@ -324,7 +324,7 @@ private predicate basicFlowStep(DataFlow::Node pred, DataFlow::Node succ, PathSu
    summary = PathSummary::level(true)
    or
    // Flow into function
-   callStep(pred, succ) and
+   callStep(_, pred, _, succ) and
    summary = PathSummary::call(true)
    or
    // Flow out of function
@@ -400,10 +400,7 @@ private predicate callInputStep(Function f, DataFlow::Node invk,
                                 DataFlow::Configuration cfg) {
   isRelevant(pred, cfg) and
   (
-   exists (Parameter parm |
-     argumentPassing(invk, pred, f, parm) and
-     succ = DataFlow::parameterNode(parm)
-   )
+   callStep(invk, pred, f, succ)
    or
    exists (SsaDefinition prevDef, SsaDefinition def |
      pred = DataFlow::ssaDefinitionNode(prevDef) and
