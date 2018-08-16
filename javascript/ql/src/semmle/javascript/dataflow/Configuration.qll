@@ -455,7 +455,8 @@ private predicate flowThroughCall(DataFlow::Node input, DataFlow::Node invk,
  * Holds if `pred` may flow into property `prop` of `succ` under configuration `cfg`
  * along a path summarized by `summary`.
  */
-private predicate storeStep(DataFlow::Node pred, DataFlow::SourceNode succ, string prop,
+pragma[nomagic]
+private predicate storeStep(DataFlow::Node pred, DataFlow::Node succ, string prop,
                             DataFlow::Configuration cfg, PathSummary summary) {
   basicStoreStep(pred, succ, prop) and
   summary = PathSummary::level(true)
@@ -499,6 +500,7 @@ private predicate loadStep(DataFlow::Node pred, DataFlow::Node succ, string prop
  * from the base of that write under configuration `cfg` (possibly through callees) along a
  * path summarized by `summary`.
  */
+pragma[nomagic]
 private predicate reachableFromStoreBase(string prop, DataFlow::Node rhs, DataFlow::Node nd,
                                          DataFlow::Configuration cfg, PathSummary summary) {
   isRelevant(rhs, cfg) and
