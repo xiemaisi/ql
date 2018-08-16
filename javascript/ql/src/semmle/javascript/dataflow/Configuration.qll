@@ -344,7 +344,12 @@ private predicate exploratoryFlowStep(DataFlow::Node pred, DataFlow::Node succ,
                                       DataFlow::Configuration cfg) {
   basicFlowStep(pred, succ, _, cfg) or
   basicStoreStep(pred, succ, _) or
-  loadStep(pred, succ, _)
+  basicLoadStep(pred, succ, _) or
+  exists (DataFlow::Node invk, Function f, DataFlow::Node arg |
+    callStep(invk, pred, f, _) and
+    callStep(invk, arg, f, _) and
+    succ = arg.getALocalSource()
+  )
 }
 
 /**
@@ -455,12 +460,37 @@ private predicate storeStep(DataFlow::Node pred, DataFlow::SourceNode succ, stri
   basicStoreStep(pred, succ, prop) and
   summary = PathSummary::level(true)
   or
-  exists (Function f, DataFlow::Node mid, DataFlow::SourceNode base |
-    // `f` stores its parameter `pred` in property `prop` of a value that it returns,
-    // and `succ` is an invocation of `f`
+  exists (Function f, DataFlow::Node invk, DataFlow::Node mid |
+    // if `pred` is an input to invocation `invk` of `f` and flows into `mid`...
+    reachableFromInput(f, invk, pred, mid, cfg, summary) |
+    // ...and `f` stores `mid` into property `prop` of its return value, then `succ` is `invk`
+    returnsObjectWithProperty(f, prop,  mid) and
+    succ = invk
+    or
+    // ...and `f` stores `mid` into property `prop` of another input to the same invocation,
+    // then `succ` is the source of that input
+    exists (DataFlow::Node base, DataFlow::SourceNode mid2 |
+      callInputStep(f, invk, base, mid2, cfg) and
+      mid2.hasPropertyWrite(prop, mid) and
+      succ = base.getALocalSource()
+    )
+  )
+}
+
+/**
+ * Holds if property `prop` of `pred` may flow into `succ` under configuration `cfg`
+ * along a path summarized by `summary`.
+ */
+private predicate loadStep(DataFlow::Node pred, DataFlow::Node succ, string prop,
+                           DataFlow::Configuration cfg, PathSummary summary) {
+  basicLoadStep(pred, succ, prop) and
+  summary = PathSummary::level(true)
+  or
+  exists (Function f, DataFlow::Node mid, DataFlow::PropRead read |
+    // `f` returns property `prop` of its parameter `pred` and `succ` is an invocation of `f`
     reachableFromInput(f, succ, pred, mid, cfg, summary) and
-    base.hasPropertyWrite(prop, mid) and
-    base.flowsToExpr(f.getAReturnedExpr())
+    read.accesses(mid, prop) and
+    read.flowsToExpr(f.getAReturnedExpr())
   )
 }
 
@@ -491,9 +521,10 @@ private predicate reachableFromStoreBase(string prop, DataFlow::Node rhs, DataFl
  */
 private predicate flowThroughProperty(DataFlow::Node pred, DataFlow::Node succ,
                                       DataFlow::Configuration cfg, PathSummary summary) {
-  exists (string prop, DataFlow::Node base |
-    reachableFromStoreBase(prop, pred, base, cfg, summary) |
-    loadStep(base, succ, prop)
+  exists (string prop, DataFlow::Node base, PathSummary s1, PathSummary s2 |
+    reachableFromStoreBase(prop, pred, base, cfg, s1) and
+    loadStep(base, succ, prop, cfg, s2) and
+    summary = s1.append(s2)
   )
 }
 

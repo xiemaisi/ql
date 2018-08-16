@@ -103,7 +103,13 @@ private module NodeTracking {
       or
       basicStoreStep(mid, nd, _)
       or
-      loadStep(mid, nd, _)
+      basicLoadStep(mid, nd, _)
+      or
+      exists (DataFlow::Node invk, Function f, DataFlow::Node arg |
+        callStep(invk, mid, f, _) and
+        callStep(invk, arg, f, _) and
+        nd = arg.getALocalSource()
+      )
     )
   }
 
@@ -164,12 +170,36 @@ private module NodeTracking {
     basicStoreStep(pred, succ, prop) and
     summary = PathSummary::level(true)
     or
-    exists (Function f, DataFlow::Node mid, DataFlow::SourceNode base |
-      // `f` stores its parameter `pred` in property `prop` of a value that it returns,
-      // and `succ` is an invocation of `f`
+    exists (Function f, DataFlow::Node invk, DataFlow::Node mid |
+      // if `pred` is an input to invocation `invk` of `f` and flows into `mid`...
+      reachableFromInput(f, invk, pred, mid, summary) |
+      // ...and `f` stores `mid` into property `prop` of its return value, then `succ` is `invk`
+      returnsObjectWithProperty(f, prop,  mid) and
+      succ = invk
+      or
+      // ...and `f` stores `mid` into property `prop` of another input to the same invocation,
+      // then `succ` is the source of that input
+      exists (DataFlow::Node base, DataFlow::SourceNode mid2 |
+        callInputStep(f, invk, base, mid2) and
+        mid2.hasPropertyWrite(prop, mid) and
+        succ = base.getALocalSource()
+      )
+    )
+  }
+
+  /**
+   * Holds if property `prop` of `pred` may flow into `succ` along a path summarized by `summary`.
+   */
+  private predicate loadStep(DataFlow::Node pred, DataFlow::Node succ, string prop,
+                             PathSummary summary) {
+    basicLoadStep(pred, succ, prop) and
+    summary = PathSummary::level(true)
+    or
+    exists (Function f, DataFlow::Node mid, DataFlow::PropRead read |
+      // `f` returns property `prop` of its parameter `pred` and `succ` is an invocation of `f`
       reachableFromInput(f, succ, pred, mid, summary) and
-      base.hasPropertyWrite(prop, mid) and
-      base.flowsToExpr(f.getAReturnedExpr())
+      read.accesses(mid, prop) and
+      read.flowsToExpr(f.getAReturnedExpr())
     )
   }
 
@@ -196,9 +226,10 @@ private module NodeTracking {
    */
   private predicate flowThroughProperty(DataFlow::Node pred, DataFlow::Node succ,
                                         PathSummary summary) {
-    exists (string prop, DataFlow::Node base |
-      reachableFromStoreBase(prop, pred, base, summary) and
-      loadStep(base, succ, prop)
+    exists (string prop, DataFlow::Node base, PathSummary s1, PathSummary s2 |
+      reachableFromStoreBase(prop, pred, base, s1) and
+      loadStep(base, succ, prop, s2) and
+      summary = s1.append(s2)
     )
   }
 

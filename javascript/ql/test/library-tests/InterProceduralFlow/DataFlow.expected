@@ -23,10 +23,13 @@
 | promises.js:12:22:12:31 | "rejected" | promises.js:24:20:24:20 | v |
 | promises.js:12:22:12:31 | "rejected" | promises.js:27:16:27:16 | v |
 | properties2.js:7:14:7:21 | "source" | properties2.js:8:12:8:24 | foo(source).p |
+| properties2.js:7:14:7:21 | "source" | properties2.js:17:13:17:15 | o.p |
 | properties.js:2:16:2:24 | "tainted" | properties.js:5:14:5:23 | a.someProp |
 | properties.js:2:16:2:24 | "tainted" | properties.js:12:15:12:24 | x.someProp |
 | properties.js:2:16:2:24 | "tainted" | properties.js:14:15:14:27 | tmp1.someProp |
 | properties.js:18:26:18:42 | "tainted as well" | properties.js:20:24:20:33 | window.foo |
+| setter.js:6:14:6:22 | "tainted" | setter.js:10:13:10:16 | a1.x |
+| setter.js:6:14:6:22 | "tainted" | setter.js:11:13:11:21 | a1.getX() |
 | tst2.js:2:17:2:26 | "tainted1" | tst2.js:10:15:10:24 | g(source1) |
 | tst2.js:3:17:3:26 | "tainted2" | tst2.js:11:15:11:24 | g(source2) |
 | tst2.js:6:24:6:37 | "also tainted" | tst2.js:10:15:10:24 | g(source1) |

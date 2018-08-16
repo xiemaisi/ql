@@ -214,8 +214,19 @@ predicate basicStoreStep(DataFlow::Node pred, DataFlow::Node succ, string prop) 
  * Holds if there is a load step from `pred` to `succ` under property `prop`,
  * that is, `succ` is a read of property `prop` from `pred`.
  */
-predicate loadStep(DataFlow::Node pred, DataFlow::PropRead succ, string prop) {
+predicate basicLoadStep(DataFlow::Node pred, DataFlow::PropRead succ, string prop) {
   succ.accesses(pred, prop)
+}
+
+/**
+ * Holds if `f` may return an object into whose property `prop` the result of `rhs`
+ * is stored.
+ */
+predicate returnsObjectWithProperty(Function f, string prop, DataFlow::Node rhs) {
+  exists (DataFlow::SourceNode base |
+    base.hasPropertyWrite(prop, rhs) and
+    base.flowsToExpr(f.getAReturnedExpr())
+  )
 }
 
 /**
