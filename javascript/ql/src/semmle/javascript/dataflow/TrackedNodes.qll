@@ -117,7 +117,7 @@ private module NodeTracking {
     isRelevant(pred) and
     (
      exists (Parameter parm |
-       argumentPassing(invk, pred, f, parm) and
+       argumentPassing(pred, invk, f, parm) and
        succ = DataFlow::parameterNode(parm)
      )
      or

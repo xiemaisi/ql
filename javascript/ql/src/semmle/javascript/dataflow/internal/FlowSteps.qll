@@ -63,7 +63,7 @@ predicate localFlowStep(DataFlow::Node pred, DataFlow::Node succ,
  * Holds if `arg` is passed as an argument into parameter `parm`
  * through invocation `invk` of function `f`.
  */
-predicate argumentPassing(DataFlow::InvokeNode invk, DataFlow::ValueNode arg, Function f, Parameter parm) {
+predicate argumentPassing(DataFlow::ValueNode arg, DataFlow::InvokeNode invk, Function f, Parameter parm) {
   calls(invk, f) and
   exists (int i |
     f.getParameter(i) = parm and not parm.isRestParameter() and
@@ -78,7 +78,7 @@ predicate argumentPassing(DataFlow::InvokeNode invk, DataFlow::ValueNode arg, Fu
  */
 predicate callStep(DataFlow::Node pred, DataFlow::Node succ) {
   exists (Parameter parm |
-    argumentPassing(_, pred, _, parm) and
+    argumentPassing(pred, _, _, parm) and
     succ = DataFlow::parameterNode(parm)
   )
 }
