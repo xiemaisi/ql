@@ -141,10 +141,18 @@ private module NodeTracking {
     summary = PathSummary::empty()
     or
     exists (DataFlow::Node mid, PathSummary oldSummary, PathSummary newSummary |
-      reachableFromInput(f, invk, input, mid, oldSummary) and
-      flowStep(mid, nd, newSummary) and
+      reachableFromInputNext(f, invk, input, mid, oldSummary, nd, newSummary) and
       summary = oldSummary.append(newSummary)
     )
+  }
+
+  pragma[noinline]
+  private predicate reachableFromInputNext(Function f, DataFlow::Node invk,
+                                           DataFlow::Node input, DataFlow::Node mid,
+                                           PathSummary summary1,
+                                           DataFlow::Node succ, PathSummary summary2) {
+    reachableFromInput(f, invk, input, mid, summary1) and
+    flowStep(mid, succ, summary2)
   }
 
   /**
@@ -185,10 +193,18 @@ private module NodeTracking {
     storeStep(rhs, nd, prop, summary)
     or
     exists (DataFlow::Node mid, PathSummary oldSummary, PathSummary newSummary |
-      reachableFromStoreBase(prop, rhs, mid, oldSummary) and
-      flowStep(mid, nd, newSummary) and
+      reachableFromStoreBaseNext(prop, rhs, mid, oldSummary, nd, newSummary) and
       summary = oldSummary.append(newSummary)
     )
+  }
+
+  pragma[noinline]
+  private predicate reachableFromStoreBaseNext(string prop, DataFlow::Node rhs,
+                                               DataFlow::Node mid,
+                                               PathSummary summary1,
+                                               DataFlow::Node succ, PathSummary summary2) {
+    reachableFromStoreBase(prop, rhs, mid, summary1) and
+    flowStep(mid, succ, summary2)
   }
 
   /**

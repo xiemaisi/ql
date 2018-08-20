@@ -340,11 +340,12 @@ private predicate basicFlowStep(DataFlow::Node pred, DataFlow::Node succ, PathSu
  * This predicate is field insensitive (it does not distinguish between `x` and `x.p`)
  * and hence should only be used for purposes of approximation.
  */
-private predicate exploratoryFlowStep(DataFlow::Node pred, DataFlow::Node succ,
-                                      DataFlow::Configuration cfg) {
+pragma[noopt]
+private predicate exploratoryFlowStep(DataFlow::Node pred, DataFlow::Configuration cfg,
+                                      DataFlow::Node succ) {
   basicFlowStep(pred, succ, _, cfg) or
-  basicStoreStep(pred, succ, _) or
-  loadStep(pred, succ, _)
+  basicStoreStep(pred, succ, _) and cfg instanceof DataFlow::Configuration or
+  loadStep(pred, succ, _) and cfg instanceof DataFlow::Configuration
 }
 
 /**
@@ -369,9 +370,13 @@ private predicate isSink(DataFlow::Node nd, DataFlow::Configuration cfg) {
 private predicate isRelevantForward(DataFlow::Node nd, DataFlow::Configuration cfg) {
   isSource(nd, cfg)
   or
-  exists (DataFlow::Node mid |
-    isRelevantForward(mid, cfg) and exploratoryFlowStep(mid, nd, cfg)
-  )
+  isRelevantForwardNext(_, nd, cfg)
+}
+
+pragma[noinline]
+private predicate isRelevantForwardNext(DataFlow::Node nd, DataFlow::Node next, DataFlow::Configuration cfg) {
+  isRelevantForward(nd, cfg) and
+  exploratoryFlowStep(nd, cfg, next)
 }
 
 /**
@@ -385,8 +390,7 @@ private predicate isRelevant(DataFlow::Node nd, DataFlow::Configuration cfg) {
   or
   exists (DataFlow::Node mid |
     isRelevant(mid, cfg) and
-    exploratoryFlowStep(nd, mid, cfg) and
-    isRelevantForward(nd, cfg)
+    isRelevantForwardNext(nd, mid, cfg)
   )
 }
 
@@ -430,10 +434,18 @@ private predicate reachableFromInput(Function f, DataFlow::Node invk,
   summary = PathSummary::empty()
   or
   exists (DataFlow::Node mid, PathSummary oldSummary, PathSummary newSummary |
-    reachableFromInput(f, invk, input, mid, cfg, oldSummary) and
-    flowStep(mid, cfg, nd, newSummary) and
+    reachableFromInputNext(f, invk, input, mid, cfg, oldSummary, nd, newSummary) and
     summary = oldSummary.append(newSummary)
   )
+}
+
+pragma[noinline]
+private predicate reachableFromInputNext(Function f, DataFlow::Node invk,
+                                         DataFlow::Node input, DataFlow::Node mid,
+                                         DataFlow::Configuration cfg, PathSummary summary1,
+                                         DataFlow::Node succ, PathSummary summary2) {
+  reachableFromInput(f, invk, input, mid, cfg, summary1) and
+  flowStep(mid, cfg, succ, summary2)
 }
 
 /**
@@ -490,11 +502,19 @@ private predicate reachableFromStoreBase(string prop, DataFlow::Node rhs, DataFl
   storeStep(rhs, nd, prop, cfg, summary)
   or
   exists (DataFlow::Node mid, PathSummary oldSummary, PathSummary newSummary |
-    reachableFromStoreBase(prop, rhs, mid, cfg, oldSummary) and
-    flowStep(mid, cfg, nd, newSummary) and
-    newSummary.valuePreserving() = true and
+    reachableFromStoreBaseNext(prop, rhs, mid, cfg, oldSummary, nd, newSummary) and
     summary = oldSummary.append(newSummary)
   )
+}
+
+pragma[noinline]
+private predicate reachableFromStoreBaseNext(string prop, DataFlow::Node rhs,
+                                             DataFlow::Node mid,
+                                             DataFlow::Configuration cfg, PathSummary summary1,
+                                             DataFlow::Node succ, PathSummary summary2) {
+  reachableFromStoreBase(prop, rhs, mid, cfg, summary1) and
+  flowStep(mid, cfg, succ, summary2) and
+  summary2.valuePreserving() = true
 }
 
 /**
