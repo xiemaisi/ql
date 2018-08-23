@@ -513,8 +513,14 @@ private predicate reachableFromStoreBaseNext(string prop, DataFlow::Node rhs,
                                              DataFlow::Configuration cfg, PathSummary summary1,
                                              DataFlow::Node succ, PathSummary summary2) {
   reachableFromStoreBase(prop, rhs, mid, cfg, summary1) and
-  flowStep(mid, cfg, succ, summary2) and
-  summary2.valuePreserving() = true
+  valuePreservingFlowStep(mid, cfg, succ, summary2)
+}
+
+pragma[noinline]
+private predicate valuePreservingFlowStep(DataFlow::Node pred, DataFlow::Configuration cfg,
+                                          DataFlow::Node succ, PathSummary summary) {
+  flowStep(pred, cfg, succ, summary) and
+  summary.valuePreserving() = true
 }
 
 /**
