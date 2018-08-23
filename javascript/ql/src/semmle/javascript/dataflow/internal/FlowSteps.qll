@@ -27,12 +27,17 @@ predicate calls(DataFlow::InvokeNode invk, Function f) {
     f = invk.getACallee()
 }
 
+SsaExplicitDefinition getSingleDef(LocalVariable v) {
+  result.getSourceVariable() = v and
+  count(SsaExplicitDefinition def | def.getSourceVariable() = v) = 1
+}
+
 /**
  * Holds if `f` captures the variable defined by `def` in `cap`.
  */
 cached
 predicate captures(Function f, SsaExplicitDefinition def, SsaVariableCapture cap) {
-  def.getSourceVariable() = cap.getSourceVariable() and
+  def = getSingleDef(cap.getSourceVariable()) and
   f = cap.getContainer()
 }
 
