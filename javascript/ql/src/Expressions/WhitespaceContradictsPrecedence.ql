@@ -67,6 +67,11 @@ predicate interestingNesting(BinaryExpr inner, BinaryExpr outer) {
 
 from BinaryExpr inner, BinaryExpr outer
 where interestingNesting(inner, outer) and
-      inner.getWhitespaceAroundOperator() > outer.getWhitespaceAroundOperator() and
+      (
+        inner.getWhitespaceAroundOperator() > outer.getWhitespaceAroundOperator()
+        or
+        inner.hasLineBreakBetweenOperands() and
+        not outer.hasLineBreakBetweenOperands()
+      ) and
       not outer.getTopLevel().isMinified()
 select outer, "Whitespace around nested operators contradicts precedence."

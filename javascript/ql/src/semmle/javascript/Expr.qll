@@ -1027,6 +1027,10 @@ class BinaryExpr extends @binaryexpr, Expr {
       result = c4-c3-1
     )
   }
+
+  predicate hasLineBreakBetweenOperands() {
+    getLeftOperand().getLocation().getEndLine() < getRightOperand().getLocation().getStartLine()
+  }
 }
 
 /**
