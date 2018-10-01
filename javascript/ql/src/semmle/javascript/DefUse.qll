@@ -2,88 +2,115 @@
 
 import javascript
 
-/**
- * Holds if `def` is a CFG node that assigns the value of `rhs` to `lhs`.
- *
- * This predicate covers four kinds of definitions:
- *
- * <table border="1">
- * <tr><th>Example<th><code>def</code><th><code>lhs</code><th><code>rhs</code></tr>
- * <tr><td><code>x = y</code><td><code>x = y</code><td><code>x</code><td><code>y</code></tr>
- * <tr><td><code>var a = b</code><td><code>var a = b</code><td><code>a</code><td><code>b</code></tr>
- * <tr><td><code>function f { ... }</code><td><code>f</code><td><code>f</code><td><code>function f { ... }</code></tr>
- * <tr><td><code>class C { ... }</code><td><code>C</code><td><code>C</code><td><code>class C { ... }</code></tr>
- * <tr><td><code>namespace N { ... }</code><td><code>N</code><td><code>N</code><td><code>namespace N { ... }</code></tr>
- * <tr><td><code>enum E { ... }</code><td><code>E</code><td><code>E</code><td><code>enum E { ... }</code></tr>
- * <tr><td><code>import x = y</code><td><code>x</code><td><code>x</code><td><code>y</code></tr>
- * <tr><td><code>enum { x = y }</code><td><code>x</code><td><code>x</code><td><code>y</code></tr>
- * </table>
- *
- * Note that `def` and `lhs` are not in general the same: the latter
- * represents the point where `lhs` is evaluated to an assignable reference,
- * the former the point where the value of `rhs` is actually assigned
- * to that reference.
- */
-private predicate defn(ControlFlowNode def, Expr lhs, AST::ValueNode rhs) {
-  exists (AssignExpr assgn | def = assgn |
-    lhs = assgn.getTarget() and rhs = assgn.getRhs()
-  ) or
-  exists (VariableDeclarator vd | def = vd |
-    lhs = vd.getBindingPattern() and rhs = vd.getInit()
-  ) or
-  exists (Function f | def = f.getId() |
-    lhs = def and rhs = f
-  ) or
-  exists (ClassDefinition c | lhs = c.getIdentifier() |
-    def = c and rhs = c and not c.isAmbient()
-  ) or
-  exists (NamespaceDeclaration n | def = n |
-    lhs = n.getId() and rhs = n
-  ) or
-  exists (EnumDeclaration ed | def = ed.getIdentifier() |
-    lhs = def and rhs = ed
-  ) or
-  exists (ImportEqualsDeclaration i | def = i |
-    lhs = i.getId() and rhs = i.getImportedEntity()
-  ) or
-  exists (EnumMember member | def = member.getIdentifier() |
-    lhs = def and rhs = member.getInitializer()
-  )
-}
+private module Impl {
+  abstract class VarDefImpl extends ControlFlowNode {
+    abstract Expr getLhs();
 
-/**
- * Holds if `def` is a CFG node that assigns to `lhs`.
- *
- * This predicate extends the three-argument version of `defn` to also cover definitions
- * where there is no explicit right hand side:
- *
- * <table border="1">
- * <tr><th>Example<th><code>def</code><th><code>lhs</code></tr>
- * <tr><td><code>x += y</code><td><code>x += y</code><td><code>x</code></tr>
- * <tr><td><code>++z.q</code><td><code>++z.q</code><td><code>z.q</code></tr>
- * <tr><td><code>import { a as b } from 'm'</code><td><code>a as b</code><td><code>b</code></tr>
- * <tr><td><code>for (var p in o) ...</code><td><code>var p</code><td><code>p</code></tr>
- * <tr><td><code>enum { x  }</code><td><code>x</code><td><code>x</code></tr>
- * </table>
- *
- * Additionally, parameters are also considered definitions, which are their own `lhs`.
- */
-private predicate defn(ControlFlowNode def, Expr lhs) {
-  defn(def, lhs, _) or
-  lhs = def.(CompoundAssignExpr).getTarget() or
-  lhs = def.(UpdateExpr).getOperand().stripParens() or
-  lhs = def.(ImportSpecifier).getLocal() or
-  exists (EnhancedForLoop efl | def = efl.getIteratorExpr() |
-    lhs = def.(Expr).stripParens() or
-    lhs = def.(VariableDeclarator).getBindingPattern()
-  ) or
-  lhs = def and (
-    def instanceof Parameter or
-    def = any(ComprehensionBlock cb).getIterator()
-  ) or
-  exists (EnumMember member | def = member.getIdentifier() |
-    lhs = def and not exists (member.getInitializer()))
+    AST::ValueNode getRhs() { none() }
+
+    DataFlow::Node getRhsNode() { result = getRhs().flow() }
+  }
+
+  /**
+   * Holds if `def` is a CFG node that assigns the value of `rhs` to `lhs`.
+   *
+   * This predicate covers four kinds of definitions:
+   *
+   * <table border="1">
+   * <tr><th>Example<th><code>def</code><th><code>lhs</code><th><code>rhs</code></tr>
+   * <tr><td><code>x = y</code><td><code>x = y</code><td><code>x</code><td><code>y</code></tr>
+   * <tr><td><code>var a = b</code><td><code>var a = b</code><td><code>a</code><td><code>b</code></tr>
+   * <tr><td><code>function f { ... }</code><td><code>f</code><td><code>f</code><td><code>function f { ... }</code></tr>
+   * <tr><td><code>class C { ... }</code><td><code>C</code><td><code>C</code><td><code>class C { ... }</code></tr>
+   * <tr><td><code>namespace N { ... }</code><td><code>N</code><td><code>N</code><td><code>namespace N { ... }</code></tr>
+   * <tr><td><code>enum E { ... }</code><td><code>E</code><td><code>E</code><td><code>enum E { ... }</code></tr>
+   * <tr><td><code>import x = y</code><td><code>x</code><td><code>x</code><td><code>y</code></tr>
+   * <tr><td><code>enum { x = y }</code><td><code>x</code><td><code>x</code><td><code>y</code></tr>
+   * </table>
+   *
+   * Note that `def` and `lhs` are not in general the same: the latter
+   * represents the point where `lhs` is evaluated to an assignable reference,
+   * the former the point where the value of `rhs` is actually assigned
+   * to that reference.
+   */
+  class VarDefWithSyntacticRhs extends VarDefImpl {
+    Expr lhs;
+    AST::ValueNode rhs;
+
+    VarDefWithSyntacticRhs() {
+      exists (AssignExpr assgn | this = assgn |
+        lhs = assgn.getTarget() and rhs = assgn.getRhs()
+      ) or
+      exists (VariableDeclarator vd | this = vd |
+        lhs = vd.getBindingPattern() and rhs = vd.getInit()
+      ) or
+      exists (Function f | this = f.getId() |
+        lhs = this and rhs = f
+      ) or
+      exists (ClassDefinition c | lhs = c.getIdentifier() |
+        this = c and rhs = c and not c.isAmbient()
+      ) or
+      exists (NamespaceDeclaration n | this = n |
+        lhs = n.getId() and rhs = n
+      ) or
+      exists (EnumDeclaration ed | this = ed.getIdentifier() |
+        lhs = this and rhs = ed
+      ) or
+      exists (ImportEqualsDeclaration i | this = i |
+        lhs = i.getId() and rhs = i.getImportedEntity()
+      ) or
+      exists (EnumMember member | this = member.getIdentifier() |
+        lhs = this and rhs = member.getInitializer()
+      )
+    }
+
+    override Expr getLhs() {
+      result = lhs
+    }
+
+    override AST::ValueNode getRhs() {
+      result = rhs
+    }
+  }
+
+  /**
+   * <table border="1">
+   * <tr><th>Example<th><code>def</code><th><code>lhs</code></tr>
+   * <tr><td><code>x += y</code><td><code>x += y</code><td><code>x</code></tr>
+   * <tr><td><code>++z.q</code><td><code>++z.q</code><td><code>z.q</code></tr>
+   * <tr><td><code>import { a as b } from 'm'</code><td><code>a as b</code><td><code>b</code></tr>
+   * <tr><td><code>for (var p in o) ...</code><td><code>var p</code><td><code>p</code></tr>
+   * <tr><td><code>enum { x  }</code><td><code>x</code><td><code>x</code></tr>
+   * </table>
+   *
+   * Additionally, parameters are also considered definitions, which are their own `lhs`.
+   */
+  class VarDefWithoutSyntacticRhs extends VarDefImpl {
+    Expr lhs;
+
+    VarDefWithoutSyntacticRhs() {
+      lhs = this.(CompoundAssignExpr).getTarget() or
+      lhs = this.(UpdateExpr).getOperand().stripParens() or
+      lhs = this.(ImportSpecifier).getLocal() or
+      exists (EnhancedForLoop efl | this = efl.getIteratorExpr() |
+        lhs = this.(Expr).stripParens() or
+        lhs = this.(VariableDeclarator).getBindingPattern()
+      ) or
+      lhs = this and (
+        this instanceof Parameter or
+        this = any(ComprehensionBlock cb).getIterator()
+      ) or
+      exists (EnumMember member | this = member.getIdentifier() |
+        lhs = this and not exists (member.getInitializer())
+      )
+    }
+
+    override Expr getLhs() {
+      result = lhs
+    }
+  }
 }
+private import Impl
 
 /**
  * Holds if `l` is one of the lvalues in the assignment `def`, or
@@ -92,8 +119,8 @@ private predicate defn(ControlFlowNode def, Expr lhs) {
  * For example, if `def` is `[{ x: y }] = e`, then `l` can be any
  * of `y`, `{ x: y }` and `[{ x: y }]`.
  */
-private predicate lvalAux(Expr l, ControlFlowNode def) {
-  defn(def, l)
+private predicate lvalAux(Expr l, VarDefImpl def) {
+  l = def.getLhs()
   or
   exists (ArrayPattern ap | lvalAux(ap, def) | l = ap.getAnElement().stripParens())
   or
@@ -127,7 +154,12 @@ class LValue extends RefExpr {
   ControlFlowNode getDefNode() { lvalAux(this, result) }
 
   /** Gets the source of the assignment. */
-  AST::ValueNode getRhs() { defn(_, this, result) }
+  AST::ValueNode getRhs() {
+    exists (VarDefImpl def |
+      this = def.getLhs() and
+      result = def.getRhs()
+    )
+  }
 }
 
 /**
@@ -166,8 +198,10 @@ class RValue extends RefExpr {
  * `x` as well as property `p` of `z`.
  */
 class VarDef extends ControlFlowNode {
+  VarDefImpl impl;
+
   VarDef() {
-    defn(this, _)
+    this = impl
   }
 
   /**
@@ -175,7 +209,7 @@ class VarDef extends ControlFlowNode {
    * reference, a destructuring pattern, or a property access.
    */
   Expr getTarget() {
-    defn(this, result)
+    result = impl.getLhs()
   }
 
   /** Gets a variable defined by this node, if any. */
@@ -191,7 +225,11 @@ class VarDef extends ControlFlowNode {
    * such as `for-in` loops or parameters.
    */
   AST::ValueNode getSource() {
-    defn(this, _, result)
+    result = impl.getRhs()
+  }
+
+  DataFlow::Node getRhsNode() {
+    result = impl.getRhsNode()
   }
 
   /**
