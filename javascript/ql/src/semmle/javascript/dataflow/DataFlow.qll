@@ -34,8 +34,37 @@ module DataFlow {
      }
   or TUpdateExprRhs(UpdateExpr upd)
   or TCompoundAssignExprRhs(CompoundAssignExpr assgn)
-  or TEnhancedForLoopRhs(EnhancedForLoop efl)
+  or TIterator(boolean iteratesKeys, Expr lhs, Expr iterand) {
+       iterator(_, iteratesKeys, lhs, iterand)
+     }
   or TImplicitEnumInit(EnumMember en) { not exists(en.getInitializer()) }
+
+  predicate iterator(Expr iter, boolean iteratesKeys, Expr lhs, Expr iterand) {
+    exists (EnhancedForLoop fis |
+      iter = fis.getIteratorExpr() and
+      if iter instanceof VariableDeclarator then (
+        lhs = iter.(VariableDeclarator).getBindingPattern()
+      ) else (
+        lhs = iter.stripParens()
+      )
+      and
+      iterand = fis.getIterationDomain() |
+      if fis instanceof ForInStmt then
+        iteratesKeys = true
+      else
+        iteratesKeys = false
+    )
+    or
+    exists (ComprehensionBlock cb |
+      iter = cb.getIterator() and
+      lhs = cb.getIterator() and
+      iterand = cb.getDomain() |
+      if cb instanceof ForInComprehensionBlock then
+        iteratesKeys = true
+      else
+        iteratesKeys = false
+    )
+  }
 
   /**
    * A node in the data flow graph.
@@ -443,26 +472,36 @@ module DataFlow {
     }
   }
 
-  class EnhancedForLoopRhs extends Node, TEnhancedForLoopRhs {
-    EnhancedForLoop efl;
+  class Iterator extends Node, TIterator {
+    boolean iteratesKeys;
+    Expr lhs;
+    Expr iterand;
 
-    EnhancedForLoopRhs() { this = TEnhancedForLoopRhs(efl) }
+    Iterator() { this = TIterator(iteratesKeys, lhs, iterand) }
 
-    EnhancedForLoop getLoop() {
-      result = efl
+    predicate iteratesKeys() {
+      iteratesKeys = true
+    }
+
+    Expr getLhs() {
+      result = lhs
+    }
+
+    Expr getIterand() {
+      result = iterand
     }
 
     override BasicBlock getBasicBlock() {
-      result = efl.getBasicBlock()
+      result = lhs.getBasicBlock()
     }
 
     override predicate hasLocationInfo(string filepath, int startline, int startcolumn,
                                        int endline, int endcolumn) {
-      efl.getLocation().hasLocationInfo(filepath, startline, startcolumn, endline, endcolumn)
+      lhs.getLocation().hasLocationInfo(filepath, startline, startcolumn, endline, endcolumn)
     }
 
     override string toString() {
-      result = "implicit right-hand side of head of enhanced for loop"
+      result = "implicit iterator"
     }
   }
 
@@ -1161,12 +1200,6 @@ module DataFlow {
     or
     def instanceof ImportSpecifier and
     cause = "import"
-    or
-    exists (EnhancedForLoop efl | def = efl.getIteratorExpr()) and
-    cause = "heap"
-    or
-    exists (ComprehensionBlock cb | def = cb.getIterator()) and
-    cause = "yield"
     or
     def.getTarget() instanceof DestructuringPattern and
     cause = "heap"

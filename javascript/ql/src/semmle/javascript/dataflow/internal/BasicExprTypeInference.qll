@@ -419,14 +419,14 @@ private class AnalyzedCompoundAssignRhs extends DataFlow::AnalyzedNode, DataFlow
   }
 }
 
-private class AnalyzedEnhancefForLoopRhs extends DataFlow::AnalyzedNode, DataFlow::EnhancedForLoopRhs {
+private class AnalyzedIterator extends DataFlow::AnalyzedNode, DataFlow::Iterator {
   override AbstractValue getALocalValue() {
-    efl instanceof ForInStmt and
+    iteratesKeys = true and
     result = abstractValueOfType(TTString())
   }
 
   override predicate isIncomplete(DataFlow::Incompleteness cause) {
-    not efl instanceof ForInStmt and
+    iteratesKeys = false and
     cause = "heap"
   }
 }

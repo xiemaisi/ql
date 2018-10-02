@@ -127,3 +127,7 @@ function countOccurrencesDead(xs, p) {
 			++count;
 	return count;
 }
+
+// OK (regression test)
+for ([x] of xarrs)
+	x;

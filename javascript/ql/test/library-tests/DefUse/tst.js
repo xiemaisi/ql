@@ -18,3 +18,6 @@ function f(o) {
 	return x;
 	function x() {}
 });
+
+for([v] in vs)
+	v += 19;

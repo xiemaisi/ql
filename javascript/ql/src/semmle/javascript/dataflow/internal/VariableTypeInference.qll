@@ -96,7 +96,6 @@ class AnalyzedVarDef extends VarDef {
     exists (EnhancedForLoop efl | efl instanceof ForOfStmt or efl instanceof ForEachStmt |
       this = efl.getIteratorExpr()
     ) and cause = "heap" or
-    exists (ComprehensionBlock cb | this = cb.getIterator()) and cause = "yield" or
     getTarget() instanceof DestructuringPattern and cause = "heap"
   }
 

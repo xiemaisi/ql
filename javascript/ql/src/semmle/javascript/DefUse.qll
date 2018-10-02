@@ -105,20 +105,17 @@ private module Impl {
     }
   }
 
-  class EnhancedForLoopHead extends VarDefImpl {
-    EnhancedForLoop efl;
-
-    EnhancedForLoopHead() {
-      this = efl.getIteratorExpr()
+  class IteratorDef extends VarDefImpl {
+    IteratorDef() {
+      DataFlow::iterator(this, _, _, _)
     }
 
     override Expr getLhs() {
-      result = this.(Expr).stripParens() or
-      result = this.(VariableDeclarator).getBindingPattern()
+      DataFlow::iterator(this, _, result, _)
     }
 
     override DataFlow::Node getRhsNode() {
-      result.(DataFlow::EnhancedForLoopRhs).getLoop() = efl
+      DataFlow::iterator(this, _, _, result.(DataFlow::Iterator).getIterand())
     }
   }
 
@@ -156,10 +153,8 @@ private module Impl {
     VarDefWithoutSyntacticRhs() {
       lhs = this.(ImportSpecifier).getLocal()
       or
-      lhs = this and (
-        this instanceof Parameter or
-        this = any(ComprehensionBlock cb).getIterator()
-      )
+      lhs = this and
+      this instanceof Parameter
     }
 
     override Expr getLhs() {
