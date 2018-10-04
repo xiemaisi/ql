@@ -73,6 +73,71 @@ private module Impl {
     }
   }
 
+  class UpdateDef extends VarDefImpl {
+    UpdateExpr upd;
+
+    UpdateDef() {
+      this = upd
+    }
+
+    override Expr getLhs() {
+      result = upd.getOperand().stripParens()
+    }
+
+    override DataFlow::Node getRhsNode() {
+      result.(DataFlow::UpdateExprRhs).getUpdateExpr() = upd
+    }
+  }
+
+  class CompoundDef extends VarDefImpl {
+    CompoundAssignExpr assgn;
+
+    CompoundDef() {
+      this = assgn
+    }
+
+    override Expr getLhs() {
+      result = assgn.getTarget()
+    }
+
+    override DataFlow::Node getRhsNode() {
+      result.(DataFlow::CompoundAssignExprRhs).getAssignment() = assgn
+    }
+  }
+
+  class EnhancedForLoopHead extends VarDefImpl {
+    EnhancedForLoop efl;
+
+    EnhancedForLoopHead() {
+      this = efl.getIteratorExpr()
+    }
+
+    override Expr getLhs() {
+      result = this.(Expr).stripParens() or
+      result = this.(VariableDeclarator).getBindingPattern()
+    }
+
+    override DataFlow::Node getRhsNode() {
+      result.(DataFlow::EnhancedForLoopRhs).getLoop() = efl
+    }
+  }
+
+  class EnumMemberWithImplicitInit extends VarDefImpl {
+    EnumMember em;
+
+    EnumMemberWithImplicitInit() {
+      this = em.getIdentifier() and not exists(em.getInitializer())
+    }
+
+    override Expr getLhs() {
+      result = em.getIdentifier()
+    }
+
+    override DataFlow::Node getRhsNode() {
+      result.(DataFlow::ImplicitEnumInit).getEnumMember() = em
+    }
+  }
+
   /**
    * <table border="1">
    * <tr><th>Example<th><code>def</code><th><code>lhs</code></tr>
@@ -89,19 +154,11 @@ private module Impl {
     Expr lhs;
 
     VarDefWithoutSyntacticRhs() {
-      lhs = this.(CompoundAssignExpr).getTarget() or
-      lhs = this.(UpdateExpr).getOperand().stripParens() or
-      lhs = this.(ImportSpecifier).getLocal() or
-      exists (EnhancedForLoop efl | this = efl.getIteratorExpr() |
-        lhs = this.(Expr).stripParens() or
-        lhs = this.(VariableDeclarator).getBindingPattern()
-      ) or
+      lhs = this.(ImportSpecifier).getLocal()
+      or
       lhs = this and (
         this instanceof Parameter or
         this = any(ComprehensionBlock cb).getIterator()
-      ) or
-      exists (EnumMember member | this = member.getIdentifier() |
-        lhs = this and not exists (member.getInitializer())
       )
     }
 

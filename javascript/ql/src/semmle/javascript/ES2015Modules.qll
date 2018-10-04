@@ -333,7 +333,7 @@ class ExportNamedDeclaration extends ExportDeclaration, @exportnameddeclaration 
   override DataFlow::Node getSourceNode(string name) {
     exists (VarDef d | d.getTarget() = getADecl() |
       name = d.getTarget().(VarDecl).getName() and
-      result = DataFlow::valueNode(d.getSource())
+      result = d.getRhsNode()
     ) or
     exists (ExportSpecifier spec | spec = getASpecifier() and name = spec.getExportedName() |
       not exists(getImportedPath()) and result = DataFlow::valueNode(spec.getLocal())

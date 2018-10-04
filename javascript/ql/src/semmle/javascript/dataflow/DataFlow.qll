@@ -32,6 +32,10 @@ module DataFlow {
   or TReflectiveCallNode(MethodCallExpr ce, string kind) {
        ce.getMethodName() = kind and (kind = "call" or kind = "apply")
      }
+  or TUpdateExprRhs(UpdateExpr upd)
+  or TCompoundAssignExprRhs(CompoundAssignExpr assgn)
+  or TEnhancedForLoopRhs(EnhancedForLoop efl)
+  or TImplicitEnumInit(EnumMember en) { not exists(en.getInitializer()) }
 
   /**
    * A node in the data flow graph.
@@ -390,6 +394,98 @@ module DataFlow {
 
     override string toString() {
       result = "reflective call"
+    }
+  }
+
+  class UpdateExprRhs extends Node, TUpdateExprRhs {
+    UpdateExpr upd;
+
+    UpdateExprRhs() { this = TUpdateExprRhs(upd) }
+
+    UpdateExpr getUpdateExpr() {
+      result = upd
+    }
+
+    override BasicBlock getBasicBlock() {
+      result = upd.getBasicBlock()
+    }
+
+    override predicate hasLocationInfo(string filepath, int startline, int startcolumn,
+                                       int endline, int endcolumn) {
+      upd.getLocation().hasLocationInfo(filepath, startline, startcolumn, endline, endcolumn)
+    }
+
+    override string toString() {
+      result = "implicit right-hand side of update expression"
+    }
+  }
+
+  class CompoundAssignExprRhs extends Node, TCompoundAssignExprRhs {
+    CompoundAssignExpr assgn;
+
+    CompoundAssignExprRhs() { this = TCompoundAssignExprRhs(assgn) }
+
+    CompoundAssignExpr getAssignment() {
+      result = assgn
+    }
+
+    override BasicBlock getBasicBlock() {
+      result = assgn.getBasicBlock()
+    }
+
+    override predicate hasLocationInfo(string filepath, int startline, int startcolumn,
+                                       int endline, int endcolumn) {
+      assgn.getLocation().hasLocationInfo(filepath, startline, startcolumn, endline, endcolumn)
+    }
+
+    override string toString() {
+      result = "implicit right-hand side of compound assignment"
+    }
+  }
+
+  class EnhancedForLoopRhs extends Node, TEnhancedForLoopRhs {
+    EnhancedForLoop efl;
+
+    EnhancedForLoopRhs() { this = TEnhancedForLoopRhs(efl) }
+
+    EnhancedForLoop getLoop() {
+      result = efl
+    }
+
+    override BasicBlock getBasicBlock() {
+      result = efl.getBasicBlock()
+    }
+
+    override predicate hasLocationInfo(string filepath, int startline, int startcolumn,
+                                       int endline, int endcolumn) {
+      efl.getLocation().hasLocationInfo(filepath, startline, startcolumn, endline, endcolumn)
+    }
+
+    override string toString() {
+      result = "implicit right-hand side of head of enhanced for loop"
+    }
+  }
+
+  class ImplicitEnumInit extends Node, TImplicitEnumInit {
+    EnumMember em;
+
+    ImplicitEnumInit() { this = TImplicitEnumInit(em) }
+
+    EnumMember getEnumMember() {
+      result = em
+    }
+
+    override BasicBlock getBasicBlock() {
+      result = em.getFirstControlFlowNode().getBasicBlock()
+    }
+
+    override predicate hasLocationInfo(string filepath, int startline, int startcolumn,
+                                       int endline, int endcolumn) {
+      em.getLocation().hasLocationInfo(filepath, startline, startcolumn, endline, endcolumn)
+    }
+
+    override string toString() {
+      result = "implicit initializer of enum member"
     }
   }
 

@@ -74,9 +74,7 @@ class AnalyzedVarDef extends VarDef {
    * may evaluate to.
    */
   AbstractValue getAnRhsValue() {
-    result = getRhs().getALocalValue() or
-    this = any(ForInStmt fis).getIteratorExpr() and result = abstractValueOfType(TTString()) or
-    this = any(EnumMember member | not exists(member.getInitializer())).getIdentifier() and result = abstractValueOfType(TTNumber())
+    result = getRhs().getALocalValue()
   }
 
   /**
@@ -84,9 +82,8 @@ class AnalyzedVarDef extends VarDef {
    * this `VarDef`.
    */
   DataFlow::AnalyzedNode getRhs() {
-    result = getSource().analyze() and getTarget() instanceof VarRef or
-    result.asExpr() = (CompoundAssignExpr)this or
-    result.asExpr() = (UpdateExpr)this
+    result = getRhsNode().analyze() and
+    getTarget() instanceof VarRef
   }
 
   /**

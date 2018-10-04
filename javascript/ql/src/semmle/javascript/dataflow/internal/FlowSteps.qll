@@ -126,7 +126,7 @@ private DataFlow::ValueNode getADefIn(GlobalVariable gv, File f) {
   exists (VarDef def |
     def.getFile() = f and
     def.getTarget() = gv.getAReference() and
-    result = DataFlow::valueNode(def.getSource())
+    result = def.getRhsNode()
   )
 }
 

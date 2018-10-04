@@ -406,3 +406,33 @@ private class AnalyzedAssignAddExpr extends AnalyzedCompoundAssignExpr {
     isAddition(astNode) and result = abstractValueOfType(TTNumber())
   }
 }
+
+private class AnalyzedUpdateRhs extends DataFlow::AnalyzedNode, DataFlow::UpdateExprRhs {
+  override AbstractValue getALocalValue() {
+    result = abstractValueOfType(TTNumber())
+  }
+}
+
+private class AnalyzedCompoundAssignRhs extends DataFlow::AnalyzedNode, DataFlow::CompoundAssignExprRhs {
+  override AbstractValue getALocalValue() {
+    result = assgn.flow().(AnalyzedCompoundAssignExpr).getALocalValue()
+  }
+}
+
+private class AnalyzedEnhancefForLoopRhs extends DataFlow::AnalyzedNode, DataFlow::EnhancedForLoopRhs {
+  override AbstractValue getALocalValue() {
+    efl instanceof ForInStmt and
+    result = abstractValueOfType(TTString())
+  }
+
+  override predicate isIncomplete(DataFlow::Incompleteness cause) {
+    not efl instanceof ForInStmt and
+    cause = "heap"
+  }
+}
+
+private class AnalyzedImplicitEnumInit extends DataFlow::AnalyzedNode, DataFlow::ImplicitEnumInit {
+  override AbstractValue getALocalValue() {
+    result = abstractValueOfType(TTNumber())
+  }
+}
