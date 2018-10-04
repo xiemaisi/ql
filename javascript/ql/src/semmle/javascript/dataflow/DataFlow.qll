@@ -1102,7 +1102,7 @@ module DataFlow {
     or
     exists (VarDef def |
       // from `e` to `{ p: x }` in `{ p: x } = e`
-      pred = valueNode(defSourceNode(def)) and
+      pred = defSourceNode(def) and
       succ = TDestructuringPatternNode(def.getTarget())
     )
   }
@@ -1111,8 +1111,13 @@ module DataFlow {
    * Gets the data flow node representing the source of definition `def`, taking
    * flow through IIFE calls into account.
    */
-  private AST::ValueNode defSourceNode(VarDef def) {
-    result = def.getSource() or localArgumentPassing(result, def)
+  private DataFlow::Node defSourceNode(VarDef def) {
+    result = def.getRhsNode()
+    or
+    exists (AST::ValueNode arg |
+      localArgumentPassing(arg, def) and
+      result = arg.flow()
+    )
   }
 
   /**
@@ -1124,7 +1129,7 @@ module DataFlow {
       lhs = def.getTarget() and r = lhs.getABindingVarRef() and r.getVariable() = v |
       // follow one step of the def-use chain if the lhs is a simple variable reference
       lhs = r and
-      result = TValueNode(defSourceNode(def))
+      result = defSourceNode(def)
       or
       // handle destructuring assignments
       exists (PropertyPattern pp | r = pp.getValuePattern() |
