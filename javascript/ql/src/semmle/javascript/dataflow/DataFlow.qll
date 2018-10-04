@@ -39,6 +39,7 @@ module DataFlow {
      }
   or TImplicitEnumInit(EnumMember en) { not exists(en.getInitializer()) }
   or TImportNode(ImportDeclaration id)
+  or TParameterRhs(Parameter p)
 
   predicate iterator(Expr iter, boolean iteratesKeys, Expr lhs, Expr iterand) {
     exists (EnhancedForLoop fis |
@@ -148,7 +149,7 @@ module DataFlow {
      * Holds if this expression may refer to the initial value of parameter `p`.
      */
     predicate mayReferToParameter(Parameter p) {
-      parameterNode(p).(SourceNode).flowsTo(this)
+      parameterNode(p).flowsTo(this)
     }
 
     /**
@@ -568,6 +569,32 @@ module DataFlow {
 
     override ASTNode getAstNode() {
       result = getImportedPathExpr()
+    }
+  }
+
+  /** A data flow node corresponding to a parameter. */
+  class ParameterNode extends DataFlow::SourceNode, TParameterRhs {
+    Parameter p;
+
+    ParameterNode() { this = TParameterRhs(p) }
+
+    /** Gets the parameter to which this data flow node corresponds. */
+    Parameter getParameter() { result = p }
+
+    /** Gets the name of this parameter. */
+    string getName() { result = p.getName() }
+
+    override BasicBlock getBasicBlock() {
+      result = p.getBasicBlock()
+    }
+
+    override predicate hasLocationInfo(string filepath, int startline, int startcolumn,
+                                       int endline, int endcolumn) {
+      p.getLocation().hasLocationInfo(filepath, startline, startcolumn, endline, endcolumn)
+    }
+
+    override string toString() {
+      result = "parameter node"
     }
   }
 
@@ -1053,19 +1080,6 @@ module DataFlow {
   }
 
   /**
-   * INTERNAL: Use `parameterNode(Parameter)` instead.
-   */
-  predicate parameterNode(DataFlow::Node nd, Parameter p) {
-    exists (SsaExplicitDefinition ssa |
-      nd = ssaDefinitionNode(ssa) and
-      p = ssa.getDef() and
-      p instanceof SimpleParameter
-    )
-    or
-    nd = TDestructuringPatternNode(p)
-  }
-
-  /**
    * A classification of flows that are not modeled, or only modeled incompletely, by
    * `DataFlowNode`:
    *
@@ -1165,22 +1179,12 @@ module DataFlow {
     or
     exists (VarDef def |
       // from `e` to `{ p: x }` in `{ p: x } = e`
-      pred = defSourceNode(def) and
+      pred = def.getRhsNode() and
       succ = TDestructuringPatternNode(def.getTarget())
     )
-  }
-
-  /**
-   * Gets the data flow node representing the source of definition `def`, taking
-   * flow through IIFE calls into account.
-   */
-  private DataFlow::Node defSourceNode(VarDef def) {
-    result = def.getRhsNode()
     or
-    exists (AST::ValueNode arg |
-      localArgumentPassing(arg, def) and
-      result = arg.flow()
-    )
+    // flow through IIFEs
+    localArgumentPassing(pred.asExpr(), succ.(ParameterNode).getParameter())
   }
 
   /**
@@ -1192,7 +1196,7 @@ module DataFlow {
       lhs = def.getTarget() and r = lhs.getABindingVarRef() and r.getVariable() = v |
       // follow one step of the def-use chain if the lhs is a simple variable reference
       lhs = r and
-      result = defSourceNode(def)
+      result = def.getRhsNode()
       or
       // handle destructuring assignments
       exists (PropertyPattern pp | r = pp.getValuePattern() |

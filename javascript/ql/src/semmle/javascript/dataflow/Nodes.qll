@@ -6,19 +6,6 @@
 
 import javascript
 
-/** A data flow node corresponding to a parameter. */
-class ParameterNode extends DataFlow::DefaultSourceNode {
-  Parameter p;
-
-  ParameterNode() { DataFlow::parameterNode(this, p) }
-
-  /** Gets the parameter to which this data flow node corresponds. */
-  Parameter getParameter() { result = p }
-
-  /** Gets the name of this parameter. */
-  string getName() { result = p.getName() }
-}
-
 /** A data flow node corresponding to a function invocation (with or without `new`). */
 class InvokeNode extends DataFlow::DefaultSourceNode {
   DataFlow::Impl::InvokeNodeDef impl;
@@ -258,12 +245,12 @@ class FunctionNode extends DataFlow::ValueNode, DataFlow::DefaultSourceNode {
   override Function astNode;
 
   /** Gets the `i`th parameter of this function. */
-  ParameterNode getParameter(int i) {
+  DataFlow::ParameterNode getParameter(int i) {
     result = DataFlow::parameterNode(astNode.getParameter(i))
   }
 
   /** Gets a parameter of this function. */
-  ParameterNode getAParameter() {
+  DataFlow::ParameterNode getAParameter() {
     result = getParameter(_)
   }
 

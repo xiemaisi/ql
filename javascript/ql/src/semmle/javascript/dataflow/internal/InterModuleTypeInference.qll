@@ -10,30 +10,23 @@ private import semmle.javascript.dataflow.InferredTypes
 private import AbstractPropertiesImpl
 
 /**
- * Flow analysis for ECMAScript 2015 imports as variable definitions.
+ * Flow analysis for ECMAScript 2015 imports.
  */
-private class AnalyzedImportSpecifier extends AnalyzedVarDef, @importspecifier {
-  ImportDeclaration id;
-
-  AnalyzedImportSpecifier() {
-    this = id.getASpecifier() and exists(id.resolveImportedPath())
-  }
-
-  override DataFlow::AnalyzedNode getRhs() {
-    result.(AnalyzedImport).getImportSpecifier() = this
+private class AnalyzedImport extends AnalyzedNode, DataFlow::ImportNode {
+  override AbstractValue getALocalValue() {
+    result = TAbstractModuleObject(decl.resolveImportedPath())
   }
 
   override predicate isIncomplete(DataFlow::Incompleteness cause) {
+    not exists(decl.resolveImportedPath()) and
+    cause = "import"
+    or
     // mark as incomplete if the import could rely on the lookup path
-    mayDependOnLookupPath(id.getImportedPath().getValue()) and
+    mayDependOnLookupPath(decl.getImportedPath().getValue()) and
     cause = "import"
     or
     // mark as incomplete if we cannot fully analyze this import
-    exists (Module m | m = id.resolveImportedPath() |
-      mayDynamicallyComputeExports(m)
-      or
-      incompleteExport(m, this.(ImportSpecifier).getImportedName())
-    ) and
+    mayDynamicallyComputeExports(decl.resolveImportedPath()) and
     cause = "import"
   }
 }
@@ -139,14 +132,12 @@ private predicate incompleteExport(ES2015Module m, string y) {
  * Flow analysis for import specifiers, interpreted as implicit reads of
  * properties of the `module.exports` object of the imported module.
  */
-private class AnalyzedImport extends AnalyzedPropertyRead, DataFlow::ValueNode {
+private class AnalyzedImportSpecifier extends AnalyzedPropertyRead, DataFlow::ValueNode {
   Module imported;
+  override ImportSpecifier astNode;
 
-  AnalyzedImport() {
-    exists (ImportDeclaration id |
-      astNode = id.getASpecifier() and
-      imported = id.getImportedModule()
-    )
+  AnalyzedImportSpecifier() {
+    imported = astNode.getImportDeclaration().getImportedModule()
   }
 
   /** Gets the import specifier being analyzed. */
@@ -158,22 +149,28 @@ private class AnalyzedImport extends AnalyzedPropertyRead, DataFlow::ValueNode {
     exists (AbstractProperty exports |
       exports = MkAbstractProperty(TAbstractModuleObject(imported), "exports") |
       base = exports.getALocalValue() and
-      propName = astNode.(ImportSpecifier).getImportedName()
+      propName = astNode.getImportedName()
     )
     or
     // when importing CommonJS/AMD modules from ES2015, `module.exports` appears
     // as the default export
     not imported instanceof ES2015Module and
-    astNode.(ImportSpecifier).getImportedName() = "default" and
+    astNode.getImportedName() = "default" and
     base = TAbstractModuleObject(imported) and
     propName = "exports"
+  }
+
+  override predicate isIncomplete(DataFlow::Incompleteness cause) {
+    AnalyzedPropertyRead.super.isIncomplete(cause)
+    or
+    incompleteExport(imported, astNode.getImportedName())
   }
 }
 
 /**
  * Flow analysis for namespace imports.
  */
-private class AnalyzedNamespaceImport extends AnalyzedImport {
+private class AnalyzedNamespaceImport extends AnalyzedImportSpecifier {
   override ImportNamespaceSpecifier astNode;
 
   override predicate reads(AbstractValue base, string propName) {
@@ -256,7 +253,7 @@ private class AnalyzedValueExport extends AnalyzedPropertyWrite, DataFlow::Value
 private class AnalyzedVariableExport extends AnalyzedPropertyWrite, DataFlow::ValueNode {
   ExportDeclaration export;
   string name;
-  AnalyzedVarDef varDef;
+  VarDef varDef;
 
   AnalyzedVariableExport() {
     export.exportsAs(varDef.getAVariable(), name) and

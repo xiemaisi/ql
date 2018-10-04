@@ -195,8 +195,6 @@ class DefaultSourceNode extends SourceNode {
       def instanceof ImportSpecifier
     )
     or
-    DataFlow::parameterNode(this, _)
-    or
     this instanceof DataFlow::Impl::InvokeNodeDef
     or
     this instanceof DataFlow::ImportNode

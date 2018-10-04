@@ -91,11 +91,6 @@ class AnalyzedVarDef extends VarDef {
    * due to the given `cause`.
    */
   predicate isIncomplete(DataFlow::Incompleteness cause) {
-    this instanceof Parameter and cause = "call" or
-    this instanceof ImportSpecifier and cause = "import" or
-    exists (EnhancedForLoop efl | efl instanceof ForOfStmt or efl instanceof ForEachStmt |
-      this = efl.getIteratorExpr()
-    ) and cause = "heap" or
     getTarget() instanceof DestructuringPattern and cause = "heap"
   }
 
@@ -107,84 +102,6 @@ class AnalyzedVarDef extends VarDef {
   }
 }
 
-/**
- * Flow analysis for simple parameters of selected functions.
- */
-private class AnalyzedParameter extends AnalyzedVarDef, @vardecl {
-  AnalyzedParameter() {
-    exists (FunctionWithAnalyzedParameters f, int parmIdx |
-      this = f.getParameter(parmIdx) |
-      // we cannot track flow into rest parameters
-      not this.(Parameter).isRestParameter()
-    )
-  }
-
-  /** Gets the function this is a parameter of. */
-  FunctionWithAnalyzedParameters getFunction() {
-    this = result.getAParameter()
-  }
-
-  override DataFlow::AnalyzedNode getRhs() {
-    getFunction().argumentPassing(this, result.asExpr()) or
-    result = this.(Parameter).getDefault().analyze()
-  }
-
-  override AbstractValue getAnRhsValue() {
-    result = AnalyzedVarDef.super.getAnRhsValue()
-    or
-    not getFunction().mayReceiveArgument(this) and
-    result = TAbstractUndefined()
-  }
-
-  override predicate isIncomplete(DataFlow::Incompleteness cause) {
-    getFunction().isIncomplete(cause) or
-    (
-      not getFunction().argumentPassing(this, _) and
-      getFunction().mayReceiveArgument(this) and
-      cause = "call"
-    )
-  }
-  
-}
-
-/**
- * Flow analysis for simple rest parameters.
- */
-private class AnalyzedRestParameter extends AnalyzedVarDef, @vardecl {
-  AnalyzedRestParameter() {
-    this.(Parameter).isRestParameter()
-  }
-
-  override AbstractValue getAnRhsValue() {
-    result = TAbstractOtherObject()
-  }
-
-  override predicate isIncomplete(DataFlow::Incompleteness cause) {
-    none()
-  }
-}
-
-/**
- * Flow analysis for `module` and `exports` parameters of AMD modules.
- */
-private class AnalyzedAmdParameter extends AnalyzedVarDef {
-  AbstractValue implicitInitVal;
-
-  AnalyzedAmdParameter() {
-    exists (AMDModule m, AMDModuleDefinition mdef | mdef = m.getDefine() |
-      this = mdef.getModuleParameter() and
-      implicitInitVal = TAbstractModuleObject(m)
-      or
-      this = mdef.getExportsParameter() and
-      implicitInitVal = TAbstractExportsObject(m)
-    )
-  }
-
-  override AbstractValue getAnAssignedValue() {
-    result = super.getAnAssignedValue() or
-    result = implicitInitVal
-  }
-}
 
 /**
  * Flow analysis for SSA definitions.

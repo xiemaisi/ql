@@ -8,6 +8,81 @@ import javascript
 import AbstractValuesImpl
 
 /**
+ * Flow analysis for simple parameters of selected functions.
+ */
+private class AnalyzedParameter extends AnalyzedNode, DataFlow::ParameterNode {
+  FunctionWithAnalyzedParameters f;
+
+  AnalyzedParameter() {
+    p = f.getAParameter() and
+    // we cannot track flow into rest parameters
+    not p.isRestParameter()
+  }
+
+  /** Gets the function this is a parameter of. */
+  FunctionWithAnalyzedParameters getFunction() {
+    result = f
+  }
+
+  override AbstractValue getALocalValue() {
+    exists (AnalyzedNode arg |
+      f.argumentPassing(p, arg.asExpr()) and
+      result = arg.getALocalValue()
+    )
+    or
+    not f.mayReceiveArgument(p) and
+    result = TAbstractUndefined()
+  }
+
+  override predicate isIncomplete(DataFlow::Incompleteness cause) {
+    f.isIncomplete(cause)
+    or
+    not f.argumentPassing(p, _) and
+    f.mayReceiveArgument(p) and
+    cause = "call"
+  }
+}
+
+/**
+ * Flow analysis for simple rest parameters.
+ */
+private class AnalyzedRestParameter extends AnalyzedNode, DataFlow::ParameterNode {
+  AnalyzedRestParameter() {
+    p.isRestParameter()
+  }
+
+  override AbstractValue getALocalValue() {
+    result = TAbstractOtherObject()
+  }
+
+  override predicate isIncomplete(DataFlow::Incompleteness cause) {
+    none()
+  }
+}
+
+/**
+ * Flow analysis for `module` and `exports` parameters of AMD modules.
+ */
+private class AnalyzedAmdParameter extends AnalyzedNode, DataFlow::ParameterNode {
+  AbstractValue implicitInitVal;
+
+  AnalyzedAmdParameter() {
+    exists (AMDModule m, AMDModuleDefinition mdef | mdef = m.getDefine() |
+      p = mdef.getModuleParameter() and
+      implicitInitVal = TAbstractModuleObject(m)
+      or
+      p = mdef.getExportsParameter() and
+      implicitInitVal = TAbstractExportsObject(m)
+    )
+  }
+
+  override AbstractValue getALocalValue() {
+    result = AnalyzedNode.super.getALocalValue() or
+    result = implicitInitVal
+  }
+}
+
+/**
  * Flow analysis for `this` expressions inside functions.
  */
 private abstract class AnalyzedThisExpr extends DataFlow::AnalyzedValueNode, DataFlow::ThisNode {

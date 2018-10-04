@@ -157,28 +157,19 @@ private module Impl {
     }
   }
 
-  /**
-   * <table border="1">
-   * <tr><th>Example<th><code>def</code><th><code>lhs</code></tr>
-   * <tr><td><code>x += y</code><td><code>x += y</code><td><code>x</code></tr>
-   * <tr><td><code>++z.q</code><td><code>++z.q</code><td><code>z.q</code></tr>
-   * <tr><td><code>import { a as b } from 'm'</code><td><code>a as b</code><td><code>b</code></tr>
-   * <tr><td><code>for (var p in o) ...</code><td><code>var p</code><td><code>p</code></tr>
-   * <tr><td><code>enum { x  }</code><td><code>x</code><td><code>x</code></tr>
-   * </table>
-   *
-   * Additionally, parameters are also considered definitions, which are their own `lhs`.
-   */
-  class VarDefWithoutSyntacticRhs extends VarDefImpl {
-    Expr lhs;
+  class ParameterVarDef extends VarDefImpl {
+    Parameter p;
 
-    VarDefWithoutSyntacticRhs() {
-      lhs = this and
-      this instanceof Parameter
+    ParameterVarDef() {
+      this = p
     }
 
     override Expr getLhs() {
-      result = lhs
+      result = p
+    }
+
+    override DataFlow::Node getRhsNode() {
+      result = DataFlow::parameterNode(p)
     }
   }
 }
