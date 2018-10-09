@@ -575,7 +575,8 @@ abstract class EnhancedForLoop extends LoopStmt {
    * Gets the default value of the loop's iterator, if any.
    */
   Expr getDefault() {
-    result = getChildExpr(-1)
+    result = getChildExpr(-1) or
+    result = getIteratorExpr().(VariableDeclarator).getInit()
   }
 
   /**

@@ -159,6 +159,10 @@ function tst4(o) {
   for (var z of o) {
     var z1 = z;
   }
+  for (var y2 = 0 in o) {
+    var y3 = y2; // must be a string (but our analysis thinks it could also be zero)
+  }
+  var y4 = y2; // could be a string or zero
 }
 
 function tst5(o) {

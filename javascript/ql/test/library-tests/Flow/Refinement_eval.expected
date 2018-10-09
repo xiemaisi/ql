@@ -336,75 +336,75 @@
 | tst.js:146:16:146:19 | null | [value = numeric string] | any null |
 | tst.js:146:16:146:19 | null | [value = true] | any null |
 | tst.js:146:16:146:19 | null | [value = undefined] | any null |
-| tst.js:168:7:168:7 | o | [o = 0] | 0 |
-| tst.js:168:7:168:7 | o | [o = 0] | 0 |
-| tst.js:168:7:168:7 | o | [o = ""] | '' |
-| tst.js:168:7:168:7 | o | [o = ""] | '' |
-| tst.js:168:7:168:7 | o | [o = false] | false |
-| tst.js:168:7:168:7 | o | [o = false] | false |
-| tst.js:168:7:168:7 | o | [o = indefinite function or class (call)] | any class |
-| tst.js:168:7:168:7 | o | [o = indefinite function or class (call)] | any class |
-| tst.js:168:7:168:7 | o | [o = indefinite function or class (call)] | any function |
-| tst.js:168:7:168:7 | o | [o = indefinite function or class (call)] | any function |
-| tst.js:168:7:168:7 | o | [o = indefinite object (call)] | any date |
-| tst.js:168:7:168:7 | o | [o = indefinite object (call)] | any date |
-| tst.js:168:7:168:7 | o | [o = indefinite object (call)] | any object |
-| tst.js:168:7:168:7 | o | [o = indefinite object (call)] | any object |
-| tst.js:168:7:168:7 | o | [o = indefinite object (call)] | any regular expression |
-| tst.js:168:7:168:7 | o | [o = indefinite object (call)] | any regular expression |
-| tst.js:168:7:168:7 | o | [o = non-empty, non-numeric string] | non-empty, non-numeric string |
-| tst.js:168:7:168:7 | o | [o = non-empty, non-numeric string] | non-empty, non-numeric string |
-| tst.js:168:7:168:7 | o | [o = non-zero value] | non-zero number |
-| tst.js:168:7:168:7 | o | [o = non-zero value] | non-zero number |
-| tst.js:168:7:168:7 | o | [o = null] | any null |
-| tst.js:168:7:168:7 | o | [o = null] | any null |
-| tst.js:168:7:168:7 | o | [o = numeric string] | numeric string |
-| tst.js:168:7:168:7 | o | [o = numeric string] | numeric string |
-| tst.js:168:7:168:7 | o | [o = true] | true |
-| tst.js:168:7:168:7 | o | [o = true] | true |
-| tst.js:168:7:168:7 | o | [o = undefined] | any undefined |
-| tst.js:168:7:168:7 | o | [o = undefined] | any undefined |
-| tst.js:168:7:168:21 | o !== undefined | [o = 0] | true |
-| tst.js:168:7:168:21 | o !== undefined | [o = 0] | true |
-| tst.js:168:7:168:21 | o !== undefined | [o = ""] | true |
-| tst.js:168:7:168:21 | o !== undefined | [o = ""] | true |
-| tst.js:168:7:168:21 | o !== undefined | [o = false] | true |
-| tst.js:168:7:168:21 | o !== undefined | [o = false] | true |
-| tst.js:168:7:168:21 | o !== undefined | [o = indefinite function or class (call)] | any boolean |
-| tst.js:168:7:168:21 | o !== undefined | [o = indefinite function or class (call)] | any boolean |
-| tst.js:168:7:168:21 | o !== undefined | [o = indefinite object (call)] | any boolean |
-| tst.js:168:7:168:21 | o !== undefined | [o = indefinite object (call)] | any boolean |
-| tst.js:168:7:168:21 | o !== undefined | [o = non-empty, non-numeric string] | any boolean |
-| tst.js:168:7:168:21 | o !== undefined | [o = non-empty, non-numeric string] | any boolean |
-| tst.js:168:7:168:21 | o !== undefined | [o = non-zero value] | any boolean |
-| tst.js:168:7:168:21 | o !== undefined | [o = non-zero value] | any boolean |
-| tst.js:168:7:168:21 | o !== undefined | [o = null] | true |
-| tst.js:168:7:168:21 | o !== undefined | [o = null] | true |
-| tst.js:168:7:168:21 | o !== undefined | [o = numeric string] | any boolean |
-| tst.js:168:7:168:21 | o !== undefined | [o = numeric string] | any boolean |
-| tst.js:168:7:168:21 | o !== undefined | [o = true] | true |
-| tst.js:168:7:168:21 | o !== undefined | [o = true] | true |
-| tst.js:168:7:168:21 | o !== undefined | [o = undefined] | false |
-| tst.js:168:7:168:21 | o !== undefined | [o = undefined] | false |
-| tst.js:168:13:168:21 | undefined | [o = 0] | any undefined |
-| tst.js:168:13:168:21 | undefined | [o = 0] | any undefined |
-| tst.js:168:13:168:21 | undefined | [o = ""] | any undefined |
-| tst.js:168:13:168:21 | undefined | [o = ""] | any undefined |
-| tst.js:168:13:168:21 | undefined | [o = false] | any undefined |
-| tst.js:168:13:168:21 | undefined | [o = false] | any undefined |
-| tst.js:168:13:168:21 | undefined | [o = indefinite function or class (call)] | any undefined |
-| tst.js:168:13:168:21 | undefined | [o = indefinite function or class (call)] | any undefined |
-| tst.js:168:13:168:21 | undefined | [o = indefinite object (call)] | any undefined |
-| tst.js:168:13:168:21 | undefined | [o = indefinite object (call)] | any undefined |
-| tst.js:168:13:168:21 | undefined | [o = non-empty, non-numeric string] | any undefined |
-| tst.js:168:13:168:21 | undefined | [o = non-empty, non-numeric string] | any undefined |
-| tst.js:168:13:168:21 | undefined | [o = non-zero value] | any undefined |
-| tst.js:168:13:168:21 | undefined | [o = non-zero value] | any undefined |
-| tst.js:168:13:168:21 | undefined | [o = null] | any undefined |
-| tst.js:168:13:168:21 | undefined | [o = null] | any undefined |
-| tst.js:168:13:168:21 | undefined | [o = numeric string] | any undefined |
-| tst.js:168:13:168:21 | undefined | [o = numeric string] | any undefined |
-| tst.js:168:13:168:21 | undefined | [o = true] | any undefined |
-| tst.js:168:13:168:21 | undefined | [o = true] | any undefined |
-| tst.js:168:13:168:21 | undefined | [o = undefined] | any undefined |
-| tst.js:168:13:168:21 | undefined | [o = undefined] | any undefined |
+| tst.js:172:7:172:7 | o | [o = 0] | 0 |
+| tst.js:172:7:172:7 | o | [o = 0] | 0 |
+| tst.js:172:7:172:7 | o | [o = ""] | '' |
+| tst.js:172:7:172:7 | o | [o = ""] | '' |
+| tst.js:172:7:172:7 | o | [o = false] | false |
+| tst.js:172:7:172:7 | o | [o = false] | false |
+| tst.js:172:7:172:7 | o | [o = indefinite function or class (call)] | any class |
+| tst.js:172:7:172:7 | o | [o = indefinite function or class (call)] | any class |
+| tst.js:172:7:172:7 | o | [o = indefinite function or class (call)] | any function |
+| tst.js:172:7:172:7 | o | [o = indefinite function or class (call)] | any function |
+| tst.js:172:7:172:7 | o | [o = indefinite object (call)] | any date |
+| tst.js:172:7:172:7 | o | [o = indefinite object (call)] | any date |
+| tst.js:172:7:172:7 | o | [o = indefinite object (call)] | any object |
+| tst.js:172:7:172:7 | o | [o = indefinite object (call)] | any object |
+| tst.js:172:7:172:7 | o | [o = indefinite object (call)] | any regular expression |
+| tst.js:172:7:172:7 | o | [o = indefinite object (call)] | any regular expression |
+| tst.js:172:7:172:7 | o | [o = non-empty, non-numeric string] | non-empty, non-numeric string |
+| tst.js:172:7:172:7 | o | [o = non-empty, non-numeric string] | non-empty, non-numeric string |
+| tst.js:172:7:172:7 | o | [o = non-zero value] | non-zero number |
+| tst.js:172:7:172:7 | o | [o = non-zero value] | non-zero number |
+| tst.js:172:7:172:7 | o | [o = null] | any null |
+| tst.js:172:7:172:7 | o | [o = null] | any null |
+| tst.js:172:7:172:7 | o | [o = numeric string] | numeric string |
+| tst.js:172:7:172:7 | o | [o = numeric string] | numeric string |
+| tst.js:172:7:172:7 | o | [o = true] | true |
+| tst.js:172:7:172:7 | o | [o = true] | true |
+| tst.js:172:7:172:7 | o | [o = undefined] | any undefined |
+| tst.js:172:7:172:7 | o | [o = undefined] | any undefined |
+| tst.js:172:7:172:21 | o !== undefined | [o = 0] | true |
+| tst.js:172:7:172:21 | o !== undefined | [o = 0] | true |
+| tst.js:172:7:172:21 | o !== undefined | [o = ""] | true |
+| tst.js:172:7:172:21 | o !== undefined | [o = ""] | true |
+| tst.js:172:7:172:21 | o !== undefined | [o = false] | true |
+| tst.js:172:7:172:21 | o !== undefined | [o = false] | true |
+| tst.js:172:7:172:21 | o !== undefined | [o = indefinite function or class (call)] | any boolean |
+| tst.js:172:7:172:21 | o !== undefined | [o = indefinite function or class (call)] | any boolean |
+| tst.js:172:7:172:21 | o !== undefined | [o = indefinite object (call)] | any boolean |
+| tst.js:172:7:172:21 | o !== undefined | [o = indefinite object (call)] | any boolean |
+| tst.js:172:7:172:21 | o !== undefined | [o = non-empty, non-numeric string] | any boolean |
+| tst.js:172:7:172:21 | o !== undefined | [o = non-empty, non-numeric string] | any boolean |
+| tst.js:172:7:172:21 | o !== undefined | [o = non-zero value] | any boolean |
+| tst.js:172:7:172:21 | o !== undefined | [o = non-zero value] | any boolean |
+| tst.js:172:7:172:21 | o !== undefined | [o = null] | true |
+| tst.js:172:7:172:21 | o !== undefined | [o = null] | true |
+| tst.js:172:7:172:21 | o !== undefined | [o = numeric string] | any boolean |
+| tst.js:172:7:172:21 | o !== undefined | [o = numeric string] | any boolean |
+| tst.js:172:7:172:21 | o !== undefined | [o = true] | true |
+| tst.js:172:7:172:21 | o !== undefined | [o = true] | true |
+| tst.js:172:7:172:21 | o !== undefined | [o = undefined] | false |
+| tst.js:172:7:172:21 | o !== undefined | [o = undefined] | false |
+| tst.js:172:13:172:21 | undefined | [o = 0] | any undefined |
+| tst.js:172:13:172:21 | undefined | [o = 0] | any undefined |
+| tst.js:172:13:172:21 | undefined | [o = ""] | any undefined |
+| tst.js:172:13:172:21 | undefined | [o = ""] | any undefined |
+| tst.js:172:13:172:21 | undefined | [o = false] | any undefined |
+| tst.js:172:13:172:21 | undefined | [o = false] | any undefined |
+| tst.js:172:13:172:21 | undefined | [o = indefinite function or class (call)] | any undefined |
+| tst.js:172:13:172:21 | undefined | [o = indefinite function or class (call)] | any undefined |
+| tst.js:172:13:172:21 | undefined | [o = indefinite object (call)] | any undefined |
+| tst.js:172:13:172:21 | undefined | [o = indefinite object (call)] | any undefined |
+| tst.js:172:13:172:21 | undefined | [o = non-empty, non-numeric string] | any undefined |
+| tst.js:172:13:172:21 | undefined | [o = non-empty, non-numeric string] | any undefined |
+| tst.js:172:13:172:21 | undefined | [o = non-zero value] | any undefined |
+| tst.js:172:13:172:21 | undefined | [o = non-zero value] | any undefined |
+| tst.js:172:13:172:21 | undefined | [o = null] | any undefined |
+| tst.js:172:13:172:21 | undefined | [o = null] | any undefined |
+| tst.js:172:13:172:21 | undefined | [o = numeric string] | any undefined |
+| tst.js:172:13:172:21 | undefined | [o = numeric string] | any undefined |
+| tst.js:172:13:172:21 | undefined | [o = true] | any undefined |
+| tst.js:172:13:172:21 | undefined | [o = true] | any undefined |
+| tst.js:172:13:172:21 | undefined | [o = undefined] | any undefined |
+| tst.js:172:13:172:21 | undefined | [o = undefined] | any undefined |

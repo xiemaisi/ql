@@ -406,38 +406,48 @@
 | tst.js:157:9:157:10 | y1 | tst.js:157:14:157:14 | y | file://:0:0:0:0 | non-empty, non-numeric string |
 | tst.js:157:9:157:10 | y1 | tst.js:157:14:157:14 | y | file://:0:0:0:0 | numeric string |
 | tst.js:160:9:160:10 | z1 | tst.js:160:14:160:14 | z | file://:0:0:0:0 | indefinite value (heap) |
-| tst.js:165:7:165:8 | x1 | tst.js:165:12:165:20 | undefined | file://:0:0:0:0 | undefined |
-| tst.js:166:7:166:8 | x2 | tst.js:166:12:166:27 | arguments.callee | tst.js:164:1:172:1 | function tst5 |
-| tst.js:167:7:167:8 | x3 | tst.js:167:12:167:19 | o.callee | file://:0:0:0:0 | indefinite value (call) |
-| tst.js:167:7:167:8 | x3 | tst.js:167:12:167:19 | o.callee | file://:0:0:0:0 | indefinite value (heap) |
-| tst.js:169:9:169:10 | x4 | tst.js:169:14:169:14 | o | file://:0:0:0:0 | 0 |
-| tst.js:169:9:169:10 | x4 | tst.js:169:14:169:14 | o | file://:0:0:0:0 | "" |
-| tst.js:169:9:169:10 | x4 | tst.js:169:14:169:14 | o | file://:0:0:0:0 | false |
-| tst.js:169:9:169:10 | x4 | tst.js:169:14:169:14 | o | file://:0:0:0:0 | indefinite function or class (call) |
-| tst.js:169:9:169:10 | x4 | tst.js:169:14:169:14 | o | file://:0:0:0:0 | indefinite object (call) |
-| tst.js:169:9:169:10 | x4 | tst.js:169:14:169:14 | o | file://:0:0:0:0 | non-empty, non-numeric string |
-| tst.js:169:9:169:10 | x4 | tst.js:169:14:169:14 | o | file://:0:0:0:0 | non-zero value |
-| tst.js:169:9:169:10 | x4 | tst.js:169:14:169:14 | o | file://:0:0:0:0 | null |
-| tst.js:169:9:169:10 | x4 | tst.js:169:14:169:14 | o | file://:0:0:0:0 | numeric string |
-| tst.js:169:9:169:10 | x4 | tst.js:169:14:169:14 | o | file://:0:0:0:0 | true |
-| tst.js:171:7:171:8 | x5 | tst.js:171:12:171:12 | o | file://:0:0:0:0 | 0 |
-| tst.js:171:7:171:8 | x5 | tst.js:171:12:171:12 | o | file://:0:0:0:0 | "" |
-| tst.js:171:7:171:8 | x5 | tst.js:171:12:171:12 | o | file://:0:0:0:0 | false |
-| tst.js:171:7:171:8 | x5 | tst.js:171:12:171:12 | o | file://:0:0:0:0 | indefinite function or class (call) |
-| tst.js:171:7:171:8 | x5 | tst.js:171:12:171:12 | o | file://:0:0:0:0 | indefinite object (call) |
-| tst.js:171:7:171:8 | x5 | tst.js:171:12:171:12 | o | file://:0:0:0:0 | non-empty, non-numeric string |
-| tst.js:171:7:171:8 | x5 | tst.js:171:12:171:12 | o | file://:0:0:0:0 | non-zero value |
-| tst.js:171:7:171:8 | x5 | tst.js:171:12:171:12 | o | file://:0:0:0:0 | null |
-| tst.js:171:7:171:8 | x5 | tst.js:171:12:171:12 | o | file://:0:0:0:0 | numeric string |
-| tst.js:171:7:171:8 | x5 | tst.js:171:12:171:12 | o | file://:0:0:0:0 | true |
-| tst.js:171:7:171:8 | x5 | tst.js:171:12:171:12 | o | file://:0:0:0:0 | undefined |
-| tst.js:176:9:176:14 | await1 | tst.js:176:18:176:18 | v | file://:0:0:0:0 | undefined |
-| tst.js:179:13:179:18 | await2 | tst.js:179:22:179:22 | v | file://:0:0:0:0 | indefinite value (await) |
-| tst.js:182:9:182:14 | await3 | tst.js:182:18:182:18 | v | file://:0:0:0:0 | indefinite value (await) |
-| tst.js:182:9:182:14 | await3 | tst.js:182:18:182:18 | v | file://:0:0:0:0 | undefined |
-| tst.js:185:5:185:21 | [someOtherGlobal] | tst.js:185:25:185:26 | [] | file://:0:0:0:0 | object |
-| tst.js:186:5:186:6 | x1 | tst.js:186:10:186:24 | someOtherGlobal | file://:0:0:0:0 | indefinite value (global) |
-| tst.js:186:5:186:6 | x1 | tst.js:186:10:186:24 | someOtherGlobal | file://:0:0:0:0 | indefinite value (heap) |
+| tst.js:162:12:162:13 | y2 | tst.js:162:17:162:17 | 0 | file://:0:0:0:0 | 0 |
+| tst.js:163:9:163:10 | y3 | tst.js:163:14:163:15 | y2 | file://:0:0:0:0 | 0 |
+| tst.js:163:9:163:10 | y3 | tst.js:163:14:163:15 | y2 | file://:0:0:0:0 | "" |
+| tst.js:163:9:163:10 | y3 | tst.js:163:14:163:15 | y2 | file://:0:0:0:0 | non-empty, non-numeric string |
+| tst.js:163:9:163:10 | y3 | tst.js:163:14:163:15 | y2 | file://:0:0:0:0 | numeric string |
+| tst.js:165:7:165:8 | y4 | tst.js:165:12:165:13 | y2 | file://:0:0:0:0 | 0 |
+| tst.js:165:7:165:8 | y4 | tst.js:165:12:165:13 | y2 | file://:0:0:0:0 | "" |
+| tst.js:165:7:165:8 | y4 | tst.js:165:12:165:13 | y2 | file://:0:0:0:0 | non-empty, non-numeric string |
+| tst.js:165:7:165:8 | y4 | tst.js:165:12:165:13 | y2 | file://:0:0:0:0 | numeric string |
+| tst.js:165:7:165:8 | y4 | tst.js:165:12:165:13 | y2 | file://:0:0:0:0 | undefined |
+| tst.js:169:7:169:8 | x1 | tst.js:169:12:169:20 | undefined | file://:0:0:0:0 | undefined |
+| tst.js:170:7:170:8 | x2 | tst.js:170:12:170:27 | arguments.callee | tst.js:168:1:176:1 | function tst5 |
+| tst.js:171:7:171:8 | x3 | tst.js:171:12:171:19 | o.callee | file://:0:0:0:0 | indefinite value (call) |
+| tst.js:171:7:171:8 | x3 | tst.js:171:12:171:19 | o.callee | file://:0:0:0:0 | indefinite value (heap) |
+| tst.js:173:9:173:10 | x4 | tst.js:173:14:173:14 | o | file://:0:0:0:0 | 0 |
+| tst.js:173:9:173:10 | x4 | tst.js:173:14:173:14 | o | file://:0:0:0:0 | "" |
+| tst.js:173:9:173:10 | x4 | tst.js:173:14:173:14 | o | file://:0:0:0:0 | false |
+| tst.js:173:9:173:10 | x4 | tst.js:173:14:173:14 | o | file://:0:0:0:0 | indefinite function or class (call) |
+| tst.js:173:9:173:10 | x4 | tst.js:173:14:173:14 | o | file://:0:0:0:0 | indefinite object (call) |
+| tst.js:173:9:173:10 | x4 | tst.js:173:14:173:14 | o | file://:0:0:0:0 | non-empty, non-numeric string |
+| tst.js:173:9:173:10 | x4 | tst.js:173:14:173:14 | o | file://:0:0:0:0 | non-zero value |
+| tst.js:173:9:173:10 | x4 | tst.js:173:14:173:14 | o | file://:0:0:0:0 | null |
+| tst.js:173:9:173:10 | x4 | tst.js:173:14:173:14 | o | file://:0:0:0:0 | numeric string |
+| tst.js:173:9:173:10 | x4 | tst.js:173:14:173:14 | o | file://:0:0:0:0 | true |
+| tst.js:175:7:175:8 | x5 | tst.js:175:12:175:12 | o | file://:0:0:0:0 | 0 |
+| tst.js:175:7:175:8 | x5 | tst.js:175:12:175:12 | o | file://:0:0:0:0 | "" |
+| tst.js:175:7:175:8 | x5 | tst.js:175:12:175:12 | o | file://:0:0:0:0 | false |
+| tst.js:175:7:175:8 | x5 | tst.js:175:12:175:12 | o | file://:0:0:0:0 | indefinite function or class (call) |
+| tst.js:175:7:175:8 | x5 | tst.js:175:12:175:12 | o | file://:0:0:0:0 | indefinite object (call) |
+| tst.js:175:7:175:8 | x5 | tst.js:175:12:175:12 | o | file://:0:0:0:0 | non-empty, non-numeric string |
+| tst.js:175:7:175:8 | x5 | tst.js:175:12:175:12 | o | file://:0:0:0:0 | non-zero value |
+| tst.js:175:7:175:8 | x5 | tst.js:175:12:175:12 | o | file://:0:0:0:0 | null |
+| tst.js:175:7:175:8 | x5 | tst.js:175:12:175:12 | o | file://:0:0:0:0 | numeric string |
+| tst.js:175:7:175:8 | x5 | tst.js:175:12:175:12 | o | file://:0:0:0:0 | true |
+| tst.js:175:7:175:8 | x5 | tst.js:175:12:175:12 | o | file://:0:0:0:0 | undefined |
+| tst.js:180:9:180:14 | await1 | tst.js:180:18:180:18 | v | file://:0:0:0:0 | undefined |
+| tst.js:183:13:183:18 | await2 | tst.js:183:22:183:22 | v | file://:0:0:0:0 | indefinite value (await) |
+| tst.js:186:9:186:14 | await3 | tst.js:186:18:186:18 | v | file://:0:0:0:0 | indefinite value (await) |
+| tst.js:186:9:186:14 | await3 | tst.js:186:18:186:18 | v | file://:0:0:0:0 | undefined |
+| tst.js:189:5:189:21 | [someOtherGlobal] | tst.js:189:25:189:26 | [] | file://:0:0:0:0 | object |
+| tst.js:190:5:190:6 | x1 | tst.js:190:10:190:24 | someOtherGlobal | file://:0:0:0:0 | indefinite value (global) |
+| tst.js:190:5:190:6 | x1 | tst.js:190:10:190:24 | someOtherGlobal | file://:0:0:0:0 | indefinite value (heap) |
 | tst.mjs:3:5:3:7 | req | tst.mjs:3:11:3:17 | require | file://:0:0:0:0 | indefinite value (global) |
 | tst.ts:2:14:2:14 | x | tst.ts:2:18:2:19 | 42 | file://:0:0:0:0 | non-zero value |
 | tst.ts:4:7:4:8 | x2 | tst.ts:4:12:4:12 | x | file://:0:0:0:0 | indefinite value (namespace) |

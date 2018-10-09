@@ -116,6 +116,11 @@ private module Impl {
 
     override DataFlow::Node getRhsNode() {
       DataFlow::iterator(this, _, _, result.(DataFlow::Iterator).getIterand())
+      or
+      exists (EnhancedForLoop efl |
+        this = efl.getIteratorExpr() and
+        result = DataFlow::valueNode(efl.getDefault())
+      )
     }
   }
 

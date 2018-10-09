@@ -313,12 +313,12 @@
 | tst.js:134:1:142:1 | instance of function tst2 |
 | tst.js:144:1:149:1 | function tst3 |
 | tst.js:144:1:149:1 | instance of function tst3 |
-| tst.js:151:1:162:1 | function tst4 |
-| tst.js:151:1:162:1 | instance of function tst4 |
-| tst.js:164:1:172:1 | arguments object of function tst5 |
-| tst.js:164:1:172:1 | function tst5 |
-| tst.js:164:1:172:1 | instance of function tst5 |
-| tst.js:174:1:183:1 | function awaitFlow |
+| tst.js:151:1:166:1 | function tst4 |
+| tst.js:151:1:166:1 | instance of function tst4 |
+| tst.js:168:1:176:1 | arguments object of function tst5 |
+| tst.js:168:1:176:1 | function tst5 |
+| tst.js:168:1:176:1 | instance of function tst5 |
+| tst.js:178:1:187:1 | function awaitFlow |
 | tst.mjs:1:1:4:0 | exports object of module tst |
 | tst.mjs:1:1:4:0 | module object of module tst |
 | tst.ts:1:1:15:0 | exports object of module tst |
