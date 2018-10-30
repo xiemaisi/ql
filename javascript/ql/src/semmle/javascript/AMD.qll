@@ -26,7 +26,10 @@ import javascript
 class AMDModuleDefinition extends CallExpr {
   AMDModuleDefinition() {
     getParent() instanceof ExprStmt and
-    getCallee().(GlobalVarAccess).getName() = "define" and
+    exists (string def |
+      getCallee().(GlobalVarAccess).getName() = def |
+      def = "define" or def = "asyncDefine"
+    ) and
     exists (int n | n = getNumArgument() |
       n = 1
       or
