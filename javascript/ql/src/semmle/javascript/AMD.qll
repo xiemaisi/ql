@@ -27,12 +27,12 @@ class AMDModuleDefinition extends CallExpr {
   AMDModuleDefinition() {
     getParent() instanceof ExprStmt and
     getCallee().(GlobalVarAccess).getName() = "define" and
-    exists(int n | n = getNumArgument() |
+    exists (int n | n = getNumArgument() |
       n = 1
       or
-      n = 2 and getArgument(0) instanceof ArrayExpr
+      n >= 2 and getArgument(0) instanceof ArrayExpr
       or
-      n = 3 and getArgument(0) instanceof ConstantString and getArgument(1) instanceof ArrayExpr
+      n >= 3 and getArgument(0) instanceof ConstantString and getArgument(1) instanceof ArrayExpr
     )
   }
 
