@@ -32,3 +32,32 @@ private class JSONStringifyAsCommandInjectionSource extends HeuristicSource,
     this = DataFlow::globalVarRef("JSON").getAMemberCall("stringify")
   }
 }
+
+/**
+ * A call to a JSON parser, viewed as a likely source of remote flow.
+ */
+private class JsonParseSource extends HeuristicSource, RemoteFlowSource {
+  JsonParseSource() {
+    this = any(JsonParserCall jpc).getOutput()
+  }
+
+  override string getSourceType() {
+    result = "JSON data"
+  }
+}
+
+/**
+ * A parameter called `req` or `request`, viewed as a likely source of remote flow.
+ */
+private class HeuristicRequestObject extends HeuristicSource, RemoteFlowSource {
+  HeuristicRequestObject() {
+    exists (string req, Parameter p | req = "req" or req = "request" |
+      this = DataFlow::parameterNode(p) and
+      p.getName().toLowerCase() = req
+    )
+  }
+
+  override string getSourceType() {
+    result = "request data"
+  }
+}
