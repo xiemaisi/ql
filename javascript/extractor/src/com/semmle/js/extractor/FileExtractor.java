@@ -446,9 +446,11 @@ public class FileExtractor {
 			TextualExtractor textualExtractor = new TextualExtractor(trapwriter, locationManager,
 					source, config.getExtractLines());
 			LoCInfo loc = extractor.extract(textualExtractor);
-			int numLines = textualExtractor.getNumLines();
-			int linesOfCode = loc.getLinesOfCode(), linesOfComments = loc.getLinesOfComments();
-			trapwriter.addTuple("numlines", fileLabel, numLines, linesOfCode, linesOfComments);
+			if (loc != null) {
+				int numLines = textualExtractor.getNumLines();
+				int linesOfCode = loc.getLinesOfCode(), linesOfComments = loc.getLinesOfComments();
+				trapwriter.addTuple("numlines", fileLabel, numLines, linesOfCode, linesOfComments);
+			}
 			trapwriter.addTuple("filetype", fileLabel, fileType.toString());
 			successful = true;
 		} finally {
