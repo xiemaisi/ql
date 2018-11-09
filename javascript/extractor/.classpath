@@ -16,5 +16,6 @@
 	<classpathentry kind="lib" path="/resources/lib/logback-classic-1.2.3.jar" sourcepath="/resources/lib/logback-classic-1.2.3-sources.jar"/>
 	<classpathentry kind="lib" path="/resources/lib/logback-core-1.2.3.jar" sourcepath="/resources/lib/logback-core-1.2.3-sources.jar"/>
 	<classpathentry kind="src" path="/util-java8"/>
+	<classpathentry kind="src" path="/extractor"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

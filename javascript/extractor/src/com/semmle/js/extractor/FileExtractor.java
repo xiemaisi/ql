@@ -9,6 +9,7 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.regex.Pattern;
 
+import com.semmle.extractor.xml.StAXXmlPopulator;
 import com.semmle.js.extractor.trapcache.CachingTrapWriter;
 import com.semmle.js.extractor.trapcache.ITrapCache;
 import com.semmle.util.data.StringUtil;
@@ -262,6 +263,24 @@ public class FileExtractor {
 			@Override
 			public boolean isTrapCachingAllowed() {
 				return false; // Type information cannot be cached per-file.
+			}
+		},
+
+		XML(".xml") {
+			@Override
+			public IExtractor mkExtractor(File f, ExtractorConfig config, ExtractorState state) {
+				return new IExtractor() {
+					@Override
+					public LoCInfo extract(TextualExtractor textualExtractor) throws IOException {
+						new StAXXmlPopulator(f, textualExtractor.getTrapwriter()).doit();
+						return null;
+					}
+				};
+			}
+
+			@Override
+			public String toString() {
+				return "xml";
 			}
 		},
 
