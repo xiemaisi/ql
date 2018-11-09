@@ -44,7 +44,7 @@ public class FileExtractor {
 	public static enum FileType {
 		HTML(".htm", ".html", ".xhtm", ".xhtml", ".vue") {
 			@Override
-			public IExtractor mkExtractor(ExtractorConfig config, ExtractorState state) {
+			public IExtractor mkExtractor(File f, ExtractorConfig config, ExtractorState state) {
 				return new HTMLExtractor(config);
 			}
 
@@ -56,7 +56,7 @@ public class FileExtractor {
 
 		JS(".js", ".jsx", ".mjs", ".es6", ".es") {
 			@Override
-			public IExtractor mkExtractor(ExtractorConfig config, ExtractorState state) {
+			public IExtractor mkExtractor(File f, ExtractorConfig config, ExtractorState state) {
 				return new ScriptExtractor(config);
 			}
 
@@ -91,7 +91,7 @@ public class FileExtractor {
 
 		JSON(".json") {
 			@Override
-			public IExtractor mkExtractor(ExtractorConfig config, ExtractorState state) {
+			public IExtractor mkExtractor(File f, ExtractorConfig config, ExtractorState state) {
 				return new JSONExtractor(config);
 			}
 
@@ -250,7 +250,7 @@ public class FileExtractor {
 			}
 
 			@Override
-			public IExtractor mkExtractor(ExtractorConfig config, ExtractorState state) {
+			public IExtractor mkExtractor(File f, ExtractorConfig config, ExtractorState state) {
 				return new TypeScriptExtractor(config, state.getTypeScriptParser());
 			}
 
@@ -267,7 +267,7 @@ public class FileExtractor {
 
 		YAML(".raml", ".yaml", ".yml") {
 			@Override
-			public IExtractor mkExtractor(ExtractorConfig config, ExtractorState state) {
+			public IExtractor mkExtractor(File f, ExtractorConfig config, ExtractorState state) {
 				return new YAMLExtractor(config);
 			}
 
@@ -293,9 +293,9 @@ public class FileExtractor {
 		}
 
 		/**
-		 * Construct an extractor for this file type with the appropriate configuration settings.
+		 * Construct an extractor for the given file with the appropriate configuration settings.
 		 */
-		public abstract IExtractor mkExtractor(ExtractorConfig config, ExtractorState state);
+		public abstract IExtractor mkExtractor(File f, ExtractorConfig config, ExtractorState state);
 
 		/**
 		 * Determine the {@link FileType} for a given file.
@@ -442,7 +442,7 @@ public class FileExtractor {
 		// now do the extraction itself
 		boolean successful = false;
 		try {
-			IExtractor extractor = fileType.mkExtractor(config, state);
+			IExtractor extractor = fileType.mkExtractor(f, config, state);
 			TextualExtractor textualExtractor = new TextualExtractor(trapwriter, locationManager,
 					source, config.getExtractLines());
 			LoCInfo loc = extractor.extract(textualExtractor);
