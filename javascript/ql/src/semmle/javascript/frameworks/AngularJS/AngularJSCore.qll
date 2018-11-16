@@ -23,14 +23,14 @@ DataFlow::SourceNode angular() {
   result = DataFlow::moduleImport("angular")
 }
 
-pragma[noopt]
+pragma[noinline]
+private predicate usesAngular(TopLevel tl) {
+  tl = angular().getContainer().getTopLevel()
+}
+
 private predicate isAngularString(Expr s) {
-  exists(DataFlow::SourceNode angular, StmtContainer sc, TopLevel tl |
-    angular = angular() and
-    sc = angular.getContainer() and
-    tl = sc.getTopLevel() and
-    tl = s.getTopLevel()
-  |
+  usesAngular(s.getTopLevel()) and
+  (
     s instanceof StringLiteral or
     s instanceof TemplateLiteral
   )
