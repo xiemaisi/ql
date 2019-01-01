@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 
 import com.semmle.jcorn.flow.FlowParser;
+import com.semmle.jcorn.util.Pair;
 import com.semmle.js.ast.ArrayExpression;
 import com.semmle.js.ast.AssignmentExpression;
 import com.semmle.js.ast.BlockStatement;
@@ -30,7 +31,6 @@ import com.semmle.js.ast.SourceLocation;
 import com.semmle.js.ast.Statement;
 import com.semmle.js.ast.TryStatement;
 import com.semmle.js.ast.VariableDeclaration;
-import com.semmle.util.data.Pair;
 
 /**
  * An extension of the standard jcorn parser with support for Mozilla-specific

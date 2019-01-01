@@ -18,6 +18,7 @@ import java.util.regex.Pattern;
 
 import com.semmle.jcorn.Identifiers.Dialect;
 import com.semmle.jcorn.Options.AllowReserved;
+import com.semmle.jcorn.util.Pair;
 import com.semmle.js.ast.ArrayExpression;
 import com.semmle.js.ast.ArrayPattern;
 import com.semmle.js.ast.ArrowFunctionExpression;
@@ -35,6 +36,7 @@ import com.semmle.js.ast.ClassExpression;
 import com.semmle.js.ast.ConditionalExpression;
 import com.semmle.js.ast.ContinueStatement;
 import com.semmle.js.ast.DebuggerStatement;
+import com.semmle.js.ast.DeclarationFlags;
 import com.semmle.js.ast.DoWhileStatement;
 import com.semmle.js.ast.EmptyStatement;
 import com.semmle.js.ast.EnhancedForStatement;
@@ -64,7 +66,6 @@ import com.semmle.js.ast.Literal;
 import com.semmle.js.ast.LogicalExpression;
 import com.semmle.js.ast.MemberDefinition;
 import com.semmle.js.ast.MemberExpression;
-import com.semmle.js.ast.DeclarationFlags;
 import com.semmle.js.ast.MetaProperty;
 import com.semmle.js.ast.MethodDefinition;
 import com.semmle.js.ast.NewExpression;
@@ -100,10 +101,9 @@ import com.semmle.js.ast.WithStatement;
 import com.semmle.js.ast.YieldExpression;
 import com.semmle.ts.ast.ITypeExpression;
 import com.semmle.util.collections.CollectionUtil;
-import com.semmle.util.data.Pair;
 import com.semmle.util.data.StringUtil;
-import com.semmle.util.exception.Exceptions;
 import com.semmle.util.exception.CatastrophicError;
+import com.semmle.util.exception.Exceptions;
 import com.semmle.util.io.WholeIO;
 
 /**

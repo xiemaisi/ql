@@ -2,8 +2,8 @@ package com.semmle.js.ast.json;
 
 import java.util.List;
 
+import com.semmle.jcorn.util.Pair;
 import com.semmle.js.ast.SourceLocation;
-import com.semmle.util.data.Pair;
 
 /**
  * A JSON object.

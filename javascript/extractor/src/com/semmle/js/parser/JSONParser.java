@@ -16,13 +16,13 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.semmle.jcorn.util.Pair;
 import com.semmle.js.ast.Position;
 import com.semmle.js.ast.SourceLocation;
 import com.semmle.js.ast.json.JSONArray;
 import com.semmle.js.ast.json.JSONLiteral;
 import com.semmle.js.ast.json.JSONObject;
 import com.semmle.js.ast.json.JSONValue;
-import com.semmle.util.data.Pair;
 import com.semmle.util.exception.Exceptions;
 import com.semmle.util.io.WholeIO;
 

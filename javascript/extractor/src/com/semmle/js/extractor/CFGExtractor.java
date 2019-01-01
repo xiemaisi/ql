@@ -12,6 +12,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
 
+import com.semmle.jcorn.util.Pair;
 import com.semmle.js.ast.AClass;
 import com.semmle.js.ast.AFunctionExpression;
 import com.semmle.js.ast.ArrayExpression;
@@ -110,7 +111,6 @@ import com.semmle.ts.ast.NamespaceDeclaration;
 import com.semmle.ts.ast.NonNullAssertion;
 import com.semmle.ts.ast.TypeAssertion;
 import com.semmle.util.collections.CollectionUtil;
-import com.semmle.util.data.Pair;
 import com.semmle.util.trap.TrapWriter;
 import com.semmle.util.trap.TrapWriter.Label;
 

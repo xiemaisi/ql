@@ -1,9 +1,9 @@
 package com.semmle.js.extractor;
 
+import com.semmle.jcorn.util.Pair;
 import com.semmle.js.extractor.ExtractorConfig.Platform;
 import com.semmle.js.extractor.ExtractorConfig.SourceType;
 import com.semmle.js.parser.ParseError;
-import com.semmle.util.data.Pair;
 import com.semmle.util.trap.TrapWriter.Label;
 
 /**

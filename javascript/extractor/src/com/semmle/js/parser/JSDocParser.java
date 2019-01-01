@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.semmle.jcorn.util.Pair;
 import com.semmle.js.ast.Comment;
 import com.semmle.js.ast.Position;
 import com.semmle.js.ast.SourceLocation;
@@ -31,7 +32,6 @@ import com.semmle.js.ast.jsdoc.TypeApplication;
 import com.semmle.js.ast.jsdoc.UndefinedLiteral;
 import com.semmle.js.ast.jsdoc.UnionType;
 import com.semmle.js.ast.jsdoc.VoidLiteral;
-import com.semmle.util.data.Pair;
 import com.semmle.util.exception.Exceptions;
 
 /**

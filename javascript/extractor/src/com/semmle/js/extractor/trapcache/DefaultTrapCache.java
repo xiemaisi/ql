@@ -5,9 +5,9 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 
+import com.semmle.jcorn.util.Pair;
 import com.semmle.js.extractor.ExtractorConfig;
 import com.semmle.js.extractor.FileExtractor.FileType;
-import com.semmle.util.data.Pair;
 import com.semmle.util.data.StringDigestor;
 import com.semmle.util.data.UnitParser;
 import com.semmle.util.exception.Exceptions;

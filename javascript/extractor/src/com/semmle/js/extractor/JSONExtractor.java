@@ -2,6 +2,7 @@ package com.semmle.js.extractor;
 
 import java.util.List;
 
+import com.semmle.jcorn.util.Pair;
 import com.semmle.js.ast.json.JSONArray;
 import com.semmle.js.ast.json.JSONLiteral;
 import com.semmle.js.ast.json.JSONObject;
@@ -9,7 +10,6 @@ import com.semmle.js.ast.json.JSONValue;
 import com.semmle.js.ast.json.Visitor;
 import com.semmle.js.parser.JSONParser;
 import com.semmle.js.parser.ParseError;
-import com.semmle.util.data.Pair;
 import com.semmle.util.trap.TrapWriter;
 import com.semmle.util.trap.TrapWriter.Label;
 

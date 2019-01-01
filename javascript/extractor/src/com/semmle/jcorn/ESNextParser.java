@@ -7,6 +7,7 @@ import java.util.Set;
 
 import com.semmle.jcorn.TokenType.Properties;
 import com.semmle.jcorn.jsx.JSXParser;
+import com.semmle.jcorn.util.Pair;
 import com.semmle.js.ast.BindExpression;
 import com.semmle.js.ast.BlockStatement;
 import com.semmle.js.ast.CatchClause;
@@ -41,7 +42,6 @@ import com.semmle.js.ast.SpreadElement;
 import com.semmle.js.ast.Statement;
 import com.semmle.js.ast.Token;
 import com.semmle.util.collections.CollectionUtil;
-import com.semmle.util.data.Pair;
 
 /**
  * An extension of the {@link JSXParser} with support for various
