@@ -475,7 +475,13 @@ private predicate exploratoryFlowStep(DataFlow::Node pred, DataFlow::Node succ,
                                       DataFlow::Configuration cfg) {
   basicFlowStep(pred, succ, _, cfg) or
   basicStoreStep(pred, succ, _) or
-  loadStep(pred, succ, _)
+  loadStep(pred, succ, _) or
+  // flow from parameter to local source of corresponding argument; this is needed
+  // to overapproximate flow through property writes on parameters
+  exists (DataFlow::Node arg |
+    callStep(arg, pred) and
+    succ = arg.getALocalSource()
+  )
 }
 
 /**
@@ -601,20 +607,21 @@ private predicate storeStep(DataFlow::Node pred, DataFlow::Node succ, string pro
   basicStoreStep(pred, succ, prop) and
   summary = PathSummary::level()
   or
-  exists (Function f, DataFlow::Node mid, DataFlow::Node base |
-    // `f` stores its parameter `pred` in property `prop` of a value that it returns,
-    // and `succ` is an invocation of `f`
-    reachableFromInput(f, succ, pred, mid, cfg, summary) and
-    returnedPropWrite(f, base, prop, mid)
+  exists (Function f, DataFlow::Node mid, DataFlow::InvokeNode invk |
+    // `invk` is an invocation of `f` whose argument `pred` flows into...
+    reachableFromInput(f, invk, pred, mid, cfg, summary) |
+    // ...a write to property `prop` of a value returned by `f`, so `succ` is `invk`
+    returnedPropWrite(f, prop, mid) and
+    succ = invk
+    or
+    // ...a write to property `prop` of a parameter, so `succ` is the source of the
+    // corresponding argument
+    exists (Parameter parm, DataFlow::Node arg |
+      parameterPropWrite(f, parm, prop, mid) and
+      argumentPassing(invk, arg, f, parm) and
+      succ = arg.getALocalSource()
+    )
   )
-}
-
-/**
- * Holds if `f` may return `base`, which has a write of property `prop` with right-hand side `rhs`.
- */
-predicate returnedPropWrite(Function f, DataFlow::SourceNode base, string prop, DataFlow::Node rhs) {
-  base.hasPropertyWrite(prop, rhs) and
-  base.flowsToExpr(f.getAReturnedExpr())
 }
 
 /**

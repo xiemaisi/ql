@@ -104,6 +104,13 @@ private module NodeTracking {
       basicStoreStep(mid, nd, _)
       or
       loadStep(mid, nd, _)
+      or
+      // flow from parameter to local source of corresponding argument; this is needed
+      // to overapproximate flow through property writes on parameters
+      exists (DataFlow::Node arg |
+        callStep(arg, mid) and
+        nd = arg.getALocalSource()
+      )
     )
   }
 
@@ -162,17 +169,25 @@ private module NodeTracking {
   /**
    * Holds if `pred` may flow into property `prop` of `succ` along a path summarized by `summary`.
    */
-  private predicate storeStep(DataFlow::Node pred, DataFlow::SourceNode succ, string prop,
+  private predicate storeStep(DataFlow::Node pred, DataFlow::Node succ, string prop,
                               PathSummary summary) {
     basicStoreStep(pred, succ, prop) and
     summary = PathSummary::level()
     or
-    exists (Function f, DataFlow::Node mid, DataFlow::SourceNode base |
-      // `f` stores its parameter `pred` in property `prop` of a value that it returns,
-      // and `succ` is an invocation of `f`
-      reachableFromInput(f, succ, pred, mid, summary) and
-      base.hasPropertyWrite(prop, mid) and
-      base.flowsToExpr(f.getAReturnedExpr())
+    exists (Function f, DataFlow::Node mid, DataFlow::InvokeNode invk |
+      // `invk` is an invocation of `f` whose argument `pred` flows into...
+      reachableFromInput(f, invk, pred, mid, summary) |
+      // ...a write to property `prop` of a value returned by `f`, so `succ` is `invk`
+      returnedPropWrite(f, prop, mid) and
+      succ = invk
+      or
+      // ...a write to property `prop` of a parameter, so `succ` is the source of the
+      // corresponding argument
+      exists (Parameter parm, DataFlow::Node arg |
+        parameterPropWrite(f, parm, prop, mid) and
+        argumentPassing(invk, arg, f, parm) and
+        succ = arg.getALocalSource()
+      )
     )
   }
 

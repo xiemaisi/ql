@@ -231,6 +231,26 @@ predicate basicStoreStep(DataFlow::Node pred, DataFlow::Node succ, string prop) 
 }
 
 /**
+ * Holds if `f` contains a property write to property `prop` of a value that it returns
+ * with right-hand side `rhs`.
+ */
+predicate returnedPropWrite(Function f, string prop, DataFlow::Node rhs) {
+  exists (DataFlow::SourceNode base |
+    base.hasPropertyWrite(prop, rhs) and
+    base.flowsToExpr(f.getAReturnedExpr())
+  )
+}
+
+/**
+ * Holds if `f` contains a property write to property `prop` of its parameter `parm`
+ * with right-hand side `rhs`.
+ */
+predicate parameterPropWrite(Function f, Parameter parm, string prop, DataFlow::Node rhs) {
+  parm = f.getAParameter() and
+  DataFlow::parameterNode(parm).hasPropertyWrite(prop, rhs)
+}
+
+/**
  * Holds if there is a load step from `pred` to `succ` under property `prop`,
  * that is, `succ` is a read of property `prop` from `pred`.
  */
