@@ -783,6 +783,15 @@ public class CFGExtractor {
 		private final Map<Chainable, SuccessorInfo> chainRootSuccessors = new LinkedHashMap<Chainable, SuccessorInfo>();
 
 		/**
+		 * Clears per-function/toplevel caches.
+		 */
+		private void wipeCaches() {
+			loopLabels.clear();
+			followingCache.clear();
+			chainRootSuccessors.clear();
+		}
+
+		/**
 		 * Generate entry node.
 		 */
 		private final HashMap<IStatementContainer, Node> entryNodeCache = new LinkedHashMap<IStatementContainer, Node>();
@@ -935,6 +944,7 @@ public class CFGExtractor {
 		public Void visit(Program nd, SuccessorInfo i) {
 			this.ctxt.push(nd);
 			Node entry = this.entry(nd);
+			this.wipeCaches();
 
 			List<ImportDeclaration> imports = scanImports(nd);
 			hoistedImports.addAll(imports);
@@ -1000,6 +1010,7 @@ public class CFGExtractor {
 				paramsAndDefaults.add((Expression)nd.getRest());
 
 			Node entry = this.entry(nd);
+			this.wipeCaches();
 			List<Identifier> fns = HoistedFunDecls.of(nd);
 			hoistedFns.addAll(fns);
 
