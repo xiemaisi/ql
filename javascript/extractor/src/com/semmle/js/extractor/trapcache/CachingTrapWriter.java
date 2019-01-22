@@ -74,6 +74,7 @@ public class CachingTrapWriter extends TrapWriter {
 			Exceptions.ignore(e, "Failed atomic moves are preferable to cache corruption.");
 		} finally {
 			// make sure to delete the temporary file in case the move failed
+			System.out.println("Deleting tmpFile " + tmpFile + " (CachingTrapWriter)");
 			tmpFile.delete();
 		}
 	}
