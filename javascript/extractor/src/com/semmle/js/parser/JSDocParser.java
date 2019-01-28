@@ -59,7 +59,7 @@ public class JSDocParser {
 
 			int realStartLine = comment.getLoc().getStart().getLine() + startLine;
 			int realStartColumn = (startLine == 0 ? comment.getLoc().getStart().getColumn() + 3 : 0) + startColumn;
-			SourceLocation loc = new SourceLocation(source, new Position(realStartLine, realStartColumn, -1), new Position(realStartLine, realStartColumn + 1 + title.length(), -1));
+			SourceLocation loc = new SourceLocation(new Position(realStartLine, realStartColumn, -1), new Position(realStartLine, realStartColumn + 1 + title.length(), -1));
 			tags.add(new JSDocTag(loc, title, description, name, jsdocType, tag.errors));
 		}
 		return new JSDocComment(comment, r.fst(), tags);
@@ -243,17 +243,8 @@ public class JSDocParser {
 		private <T extends JSDocTypeExpression> T finishNode(T node) {
 			SourceLocation loc = node.getLoc();
 			Position end = pos();
-			loc.setSource(inputSubstring(loc.getStart().getOffset(), end.getOffset()));
 			loc.setEnd(end);
 			return node;
-		}
-
-		private String inputSubstring(int start, int end) {
-			if (start >= source.length())
-				return "";
-			if (end > source.length())
-				end = source.length();
-			return source.substring(start, end);
 		}
 
 		private int advance() {
@@ -1497,7 +1488,7 @@ public class JSDocParser {
 							if (this._tag.type != null && !(this._tag.type instanceof OptionalType)) {
 								Position start = new Position(_tag.startLine, _tag.startColumn, _tag.startColumn);
 								Position end = new Position(_tag.startLine, _tag.startColumn, _tag.startColumn);
-								SourceLocation loc = new SourceLocation(_extra_name, start, end);
+								SourceLocation loc = new SourceLocation(start, end);
 								this._tag.type = new OptionalType(loc, this._tag.type);
 							}
 						}
@@ -1590,7 +1581,7 @@ public class JSDocParser {
 					if (_extra_name != null) {
 						Position start = new Position(_tag.startLine, _tag.startColumn, _tag.startColumn);
 						Position end = new Position(_tag.startLine, _tag.startColumn, _tag.startColumn);
-						SourceLocation loc = new SourceLocation(_extra_name, start, end);
+						SourceLocation loc = new SourceLocation(start, end);
 						this._tag.type = new NameExpression(loc, _extra_name);
 					}
 					this._tag.name = null;

@@ -25,13 +25,13 @@ public class Token extends SourceElement {
 	private final Type type;
 	private final String value;
 
-	public Token(SourceLocation loc, String typename, Object keyword) {
-		this(loc, getType(typename, keyword));
+	public Token(SourceLocation loc, String typename, Object keyword, String value) {
+		this(loc, getType(typename, keyword), value);
 	}
 
-	public Token(SourceLocation loc, Type type) {
+	public Token(SourceLocation loc, Type type, String value) {
 		super(loc);
-		this.value = loc.getSource();
+		this.value = value;
 		this.type = type;
 	}
 

@@ -42,7 +42,7 @@ public class TextualExtractor {
 	}
 
 	public String mkToString(SourceElement nd) {
-		return sanitiseToString(nd.getLoc().getSource());
+		return sanitiseToString(nd.getLoc().getSource(source));
 	}
 
 	private static final String esc = "\nn\rr\tt";

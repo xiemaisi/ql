@@ -131,7 +131,7 @@ public class JSONParser {
 	private JSONLiteral mkLiteral(int startoff, Position start, Object value) {
 		int endoff = offset;
 		Position end = getCurPos();
-		return new JSONLiteral(new SourceLocation(src.substring(startoff, endoff), start, end), value);
+		return new JSONLiteral(new SourceLocation(start, end), value, src.substring(startoff, endoff));
 	}
 
 	private JSONObject readObject(int startoff, Position start) throws ParseError {
@@ -185,7 +185,7 @@ public class JSONParser {
 		}
 		endoff = offset;
 		end = getCurPos();
-		return new JSONObject(new SourceLocation(src.substring(startoff, endoff), start, end), properties);
+		return new JSONObject(new SourceLocation(start, end), properties);
 	}
 
 	private JSONArray readArray(int startoff, Position start) throws ParseError {
@@ -230,7 +230,7 @@ public class JSONParser {
 
 		endoff = offset;
 		end = getCurPos();
-		return new JSONArray(new SourceLocation(src.substring(startoff, endoff), start, end), elements);
+		return new JSONArray(new SourceLocation(start, end), elements);
 	}
 
 	private static final String ESCAPES = "\"\"\\\\//b\bn\nf\fr\rt\t";

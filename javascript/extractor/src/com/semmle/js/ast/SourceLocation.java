@@ -4,39 +4,32 @@ package com.semmle.js.ast;
  * A source location representing a range of characters.
  */
 public class SourceLocation {
-	private String source;
 	private Position start, end;
 
-	public SourceLocation(String source, Position start, Position end) {
-		this.source = source;
+	public SourceLocation(Position start, Position end) {
 		this.start = start;
 		this.end = end;
 	}
 
 	public SourceLocation(Position start) {
-		this(null, start, null);
-	}
-
-	public SourceLocation(String source, Position start) {
-		this(source, start, null);
+		this(start, null);
 	}
 
 	public SourceLocation(SourceLocation that) {
-		this(that.source, that.start, that.end);
+		this(that.start, that.end);
 	}
 
 	/**
 	 * The source code contained in this location.
 	 */
-	public String getSource() {
-		return source;
-	}
-
-	/**
-	 * Set the source code contain in this location.
-	 */
-	public void setSource(String source) {
-		this.source = source;
+	public String getSource(String source) {
+		int start = this.start.getOffset();
+		int end = this.end.getOffset();
+		if (end > source.length())
+			end = source.length();
+		if (start >= end)
+			return "";
+		return source.substring(start, end);
 	}
 
 	/**

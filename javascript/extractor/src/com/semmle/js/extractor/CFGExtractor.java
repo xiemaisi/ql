@@ -723,7 +723,7 @@ public class CFGExtractor {
 	 */
 	private Node guardNode(Expression nd, boolean outcome) {
 		SourceLocation ndLoc = nd.getLoc();
-		Node result = new Node("Assertion", new SourceLocation(ndLoc.getSource(), ndLoc.getStart(), ndLoc.getEnd())) {
+		Node result = new Node("Assertion", new SourceLocation(ndLoc.getStart(), ndLoc.getEnd())) {
 			@Override public <Q, A> A accept(Visitor<Q, A> v, Q q) { return null; }
 		};
 		Label lbl = trapwriter.localID(result);
@@ -789,7 +789,7 @@ public class CFGExtractor {
 		private Node entry(IStatementContainer nd) {
 			Node entry = entryNodeCache.get(nd);
 			if (entry == null) {
-				entry = new Node("Entry", new SourceLocation("", nd.getLoc().getStart(), nd.getLoc().getStart())) {
+				entry = new Node("Entry", new SourceLocation(nd.getLoc().getStart(), nd.getLoc().getStart())) {
 					@Override public <Q, A> A accept(Visitor<Q, A> v, Q q) { return null; }
 				};
 				entryNodeCache.put(nd, entry);
@@ -807,7 +807,7 @@ public class CFGExtractor {
 		private Node exit(IStatementContainer nd) {
 			Node exit = exitNodeCache.get(nd);
 			if (exit == null) {
-				exit = new Node("Exit", new SourceLocation("", nd.getLoc().getEnd(), nd.getLoc().getEnd())) {
+				exit = new Node("Exit", new SourceLocation(nd.getLoc().getEnd(), nd.getLoc().getEnd())) {
 					@Override public <Q, A> A accept(Visitor<Q, A> v, Q q) { return null; }
 				};
 				Label lbl = trapwriter.localID(exit);

@@ -53,6 +53,7 @@ public class RegExpExtractor {
 	private final TrapWriter trapwriter;
 	private final LocationManager locationManager;
 	private final RegExpParser parser = new RegExpParser();
+	private String source;
 	private Position literalStart;
 
 	public RegExpExtractor(TrapWriter trapwriter, LocationManager locationManager) {
@@ -113,7 +114,7 @@ public class RegExpExtractor {
 	private Label extractTerm(RegExpTerm term, Label parent, int idx) {
 		Label lbl = trapwriter.localID(term);
 		int kind = termkinds.get(term.getType());
-		String srctext = term.getLoc().getSource();
+		String srctext = term.getLoc().getSource(source);
 		this.trapwriter.addTuple("regexpterm", lbl, kind, parent, idx, srctext);
 		emitLocation(term, lbl);
 		return lbl;
@@ -355,6 +356,7 @@ public class RegExpExtractor {
 	}
 
 	public void extract(String src, Node parent) {
+		this.source = src;
 		this.literalStart = parent.getLoc().getStart();
 		Result res = parser.parse(src);
 		RegExpTerm ast = res.getAST();

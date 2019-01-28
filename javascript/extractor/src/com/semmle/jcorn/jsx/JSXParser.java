@@ -285,7 +285,7 @@ public class JSXParser extends Parser {
 	 * at the beginning of the next one (right brace).
 	 */
 	private JSXEmptyExpression jsx_parseEmptyExpression() {
-		return new JSXEmptyExpression(new SourceLocation("", lastTokEndLoc, startLoc));
+		return new JSXEmptyExpression(new SourceLocation(lastTokEndLoc, startLoc));
 	}
 
 	/** Parses JSX expression enclosed into curly brackets. */

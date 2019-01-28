@@ -150,7 +150,7 @@ public class Options {
 	public Options onComment(List<Comment> comments) {
 		this.onComment = (block, input, text, start, end, startLoc, endLoc) -> {
 			String src = input.substring(start, end);
-			comments.add(new Comment(new SourceLocation(src, startLoc, endLoc), text));
+			comments.add(new Comment(new SourceLocation(startLoc, endLoc), text, src));
 		};
 		return this;
 	}

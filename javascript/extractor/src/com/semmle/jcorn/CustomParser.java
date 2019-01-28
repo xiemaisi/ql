@@ -211,7 +211,7 @@ public class CustomParser extends FlowParser {
 			 *
 			 *   A.f = function f(...) { ... };
 			 */
-			SourceLocation memloc = new SourceLocation(iface.getName() + "::" + id.getName(), iface.getLoc().getStart(), id.getLoc().getEnd());
+			SourceLocation memloc = new SourceLocation(iface.getLoc().getStart(), id.getLoc().getEnd());
 			MemberExpression mem = new MemberExpression(memloc, iface, new Identifier(id.getLoc(), id.getName()), false, false, false);
 			AssignmentExpression assgn = new AssignmentExpression(result.getLoc(), "=", mem, ((FunctionDeclaration)result).asFunctionExpression());
 			return new ExpressionStatement(result.getLoc(), assgn);

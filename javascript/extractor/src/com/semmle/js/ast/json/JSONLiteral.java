@@ -9,10 +9,10 @@ public class JSONLiteral extends JSONValue {
 	private final Object value;
 	private final String raw;
 
-	public JSONLiteral(SourceLocation loc, Object value) {
+	public JSONLiteral(SourceLocation loc, Object value, String raw) {
 		super("Literal", loc);
 		this.value = value;
-		this.raw = loc.getSource();
+		this.raw = raw;
 	}
 
 	/**

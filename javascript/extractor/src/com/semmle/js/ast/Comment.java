@@ -39,10 +39,9 @@ public class Comment extends SourceElement {
 	private final String text;
 	private final Kind kind;
 
-	public Comment(SourceLocation loc, String text) {
+	public Comment(SourceLocation loc, String text, String raw) {
 		super(loc);
 		this.text = text;
-		String raw = getLoc().getSource();
 		if (raw.startsWith("//"))
 			this.kind = LINE;
 		else if (raw.startsWith("/*"))

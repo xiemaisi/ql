@@ -14,7 +14,7 @@ public class Literal extends Expression implements ITypeExpression {
 	private final Object value;
 	private final String raw;
 
-	public Literal(SourceLocation loc, TokenType tokenType, Object value) {
+	public Literal(SourceLocation loc, TokenType tokenType, Object value, String raw) {
 		super("Literal", loc);
 
 		// for numbers, check whether they can be represented as integers
@@ -28,7 +28,7 @@ public class Literal extends Expression implements ITypeExpression {
 
 		this.tokenType = tokenType;
 		this.value = value;
-		this.raw = getLoc().getSource();
+		this.raw = raw;
 	}
 
 	@Override

@@ -107,7 +107,7 @@ public class RegExpParser {
 		Position startPos, endPos;
 		startPos = new Position(1, start, start);
 		endPos = new Position(1, end, end);
-		this.errors.add(new Error(new SourceLocation(inputSubstring(start, end), startPos, endPos), code));
+		this.errors.add(new Error(new SourceLocation(startPos, endPos), code));
 	}
 
 	private void error(int code, int start) {
@@ -242,9 +242,7 @@ public class RegExpParser {
 
 	private <T extends RegExpTerm> T finishTerm(T term) {
 		SourceLocation loc = term.getLoc();
-		Position end = pos();
-		loc.setSource(inputSubstring(loc.getStart().getOffset(), end.getOffset()));
-		loc.setEnd(end);
+		loc.setEnd(pos());
 		return term;
 	}
 

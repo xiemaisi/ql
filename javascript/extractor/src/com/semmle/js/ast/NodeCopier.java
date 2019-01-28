@@ -58,7 +58,7 @@ public class NodeCopier implements Visitor<Void, INode> {
 	}
 
 	private SourceLocation visit(SourceLocation loc) {
-		return new SourceLocation(loc.getSource(), visit(loc.getStart()), visit(loc.getEnd()));
+		return new SourceLocation(visit(loc.getStart()), visit(loc.getEnd()));
 	}
 
 	@SuppressWarnings("unchecked")
@@ -130,7 +130,7 @@ public class NodeCopier implements Visitor<Void, INode> {
 
 	@Override
 	public Literal visit(Literal nd, Void q) {
-		return new Literal(visit(nd.getLoc()), nd.getTokenType(), nd.getValue());
+		return new Literal(visit(nd.getLoc()), nd.getTokenType(), nd.getValue(), nd.getRaw());
 	}
 
 	@Override

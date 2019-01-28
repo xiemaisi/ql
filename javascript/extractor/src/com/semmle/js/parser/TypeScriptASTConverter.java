@@ -271,11 +271,11 @@ public class TypeScriptASTConverter {
 			String text = token.get("text").getAsString();
 			Position start = getPosition(token.get("tokenPos"));
 			Position end = advance(start, text);
-			SourceLocation loc = new SourceLocation(text, start, end);
+			SourceLocation loc = new SourceLocation(start, end);
 			String kind = getKind(token);
 			switch (kind) {
 			case "EndOfFileToken":
-				tokens.add(new Token(loc, Token.Type.EOF));
+				tokens.add(new Token(loc, Token.Type.EOF, text));
 				break;
 			case "SingleLineCommentTrivia":
 			case "MultiLineCommentTrivia":
@@ -284,25 +284,25 @@ public class TypeScriptASTConverter {
 					cookedText = text.substring(2);
 				else
 					cookedText = text.substring(2, text.length()-2);
-				comments.add(new Comment(loc, cookedText));
+				comments.add(new Comment(loc, cookedText, text));
 				break;
 			case "TemplateHead":
 			case "TemplateMiddle":
 			case "TemplateTail":
 			case "NoSubstitutionTemplateLiteral":
-				tokens.add(new Token(loc, Token.Type.STRING));
+				tokens.add(new Token(loc, Token.Type.STRING, text));
 				break;
 			case "Identifier":
-				tokens.add(new Token(loc, Token.Type.NAME));
+				tokens.add(new Token(loc, Token.Type.NAME, text));
 				break;
 			case "NumericLiteral":
-				tokens.add(new Token(loc, Token.Type.NUM));
+				tokens.add(new Token(loc, Token.Type.NUM, text));
 				break;
 			case "StringLiteral":
-				tokens.add(new Token(loc, Token.Type.STRING));
+				tokens.add(new Token(loc, Token.Type.STRING, text));
 				break;
 			case "RegularExpressionLiteral":
-				tokens.add(new Token(loc, Token.Type.REGEXP));
+				tokens.add(new Token(loc, Token.Type.REGEXP, text));
 				break;
 			default:
 				Token.Type tp;
@@ -320,7 +320,7 @@ public class TypeScriptASTConverter {
 				} else {
 					continue;
 				}
-				tokens.add(new Token(loc, tp));
+				tokens.add(new Token(loc, tp, text));
 			}
 		}
 	}
@@ -829,14 +829,14 @@ public class TypeScriptASTConverter {
 	private Node convertBigIntLiteral(JsonObject node, SourceLocation loc) throws ParseError {
 		String text = node.get("text").getAsString();
 		String value = text.substring(0, text.length() - 1); // Remove the 'n' suffix.
-		return new Literal(loc, TokenType.bigint, value);
+		return new Literal(loc, TokenType.bigint, value, text);
 	}
 
 	private Node convertBinaryExpression(JsonObject node, SourceLocation loc) throws ParseError {
 		Expression left = convertChild(node, "left");
 		Expression right = convertChild(node, "right");
 		JsonObject operatorToken = node.get("operatorToken").getAsJsonObject();
-		String operator = getSourceLocation(operatorToken).getSource();
+		String operator = getSourceLocation(operatorToken).getSource(source);
 		switch (operator) {
 		case ",":
 			List<Expression> expressions = new ArrayList<Expression>();
@@ -954,7 +954,7 @@ public class TypeScriptASTConverter {
 			superInterfaces = new ArrayList<>();
 		}
 		String skip = source.substring(loc.getStart().getOffset(), afterHead) + matchWhitespace(afterHead);
-		SourceLocation bodyLoc = new SourceLocation(loc.getSource(), loc.getStart(), loc.getEnd());
+		SourceLocation bodyLoc = new SourceLocation(loc.getStart(), loc.getEnd());
 		advance(bodyLoc, skip);
 		ClassBody body = new ClassBody(bodyLoc, convertChildren(node, "members"));
 		if ("ClassExpression".equals(kind)) {
@@ -994,7 +994,7 @@ public class TypeScriptASTConverter {
 	}
 
 	private SourceLocation getSourceRange(Position from, Position to) {
-		return new SourceLocation(source.substring(from.getOffset(), to.getOffset()), from, to);
+		return new SourceLocation(from, to);
 	}
 
 	private DecoratorList makeDecoratorList(JsonElement decorators) throws ParseError {
@@ -1166,12 +1166,13 @@ public class TypeScriptASTConverter {
 	}
 
 	private Node convertFalseKeyword(SourceLocation loc) {
-		return new Literal(loc, TokenType._false, false);
+		return new Literal(loc, TokenType._false, false, "false");
 	}
 
 	private Node convertNumericLiteral(JsonObject node, SourceLocation loc)
 			throws NumberFormatException {
-		return new Literal(loc, TokenType.num, Double.valueOf(node.get("text").getAsString()));
+		String text = node.get("text").getAsString();
+		return new Literal(loc, TokenType.num, Double.valueOf(text), text);
 	}
 
 	private Node convertForStatement(JsonObject node, SourceLocation loc) throws ParseError {
@@ -1325,14 +1326,14 @@ public class TypeScriptASTConverter {
 		boolean isTypeof = false;
 		if (node.has("isTypeOf") && node.get("isTypeOf").getAsBoolean() == true) {
 			isTypeof = true;
-			Matcher m = TYPEOF_START.matcher(loc.getSource());
+			Matcher m = TYPEOF_START.matcher(loc.getSource(source));
 			if (m.find()) {
 				importStart = advance(importStart, m.group(0));
 			}
 		}
 		// Find the ending parenthesis in `import(path)` by skipping whitespace after `path`.
 		ITypeExpression path = convertChild(node, "argument");
-		String endSrc = loc.getSource().substring(path.getLoc().getEnd().getOffset() - loc.getStart().getOffset());
+		String endSrc = loc.getSource(source).substring(path.getLoc().getEnd().getOffset() - loc.getStart().getOffset());
 		Matcher m = WHITESPACE_END_PAREN.matcher(endSrc);
 		if (m.find()) {
 			importEnd = advance(path.getLoc().getEnd(), m.group(0));
@@ -1480,7 +1481,7 @@ public class TypeScriptASTConverter {
 			text = node.get("text").getAsString();
 		else
 			text = "";
-		return new Literal(loc, TokenType.string, text);
+		return new Literal(loc, TokenType.string, text, text);
 	}
 
 	private Node convertLabeledStatement(JsonObject node, SourceLocation loc) throws ParseError {
@@ -1498,7 +1499,7 @@ public class TypeScriptASTConverter {
 	private Node convertMetaProperty(JsonObject node, SourceLocation loc) throws ParseError {
 		Position metaStart = loc.getStart();
 		Position metaEnd = new Position(metaStart.getLine(), metaStart.getColumn()+3, metaStart.getOffset()+3);
-		SourceLocation metaLoc = new SourceLocation("new", metaStart, metaEnd);
+		SourceLocation metaLoc = new SourceLocation(metaStart, metaEnd);
 		Identifier meta = new Identifier(metaLoc, "new");
 		return new MetaProperty(loc, meta, convertChild(node, "name"));
 	}
@@ -1623,14 +1624,15 @@ public class TypeScriptASTConverter {
 	private Node convertNoSubstitutionTemplateLiteral(JsonObject node,
 			SourceLocation loc) {
 		List<TemplateElement> quasis = new ArrayList<>();
-		TemplateElement elm = new TemplateElement(loc, node.get("text").getAsString(), loc.getSource().substring(1, loc.getSource().length()-1), true);
+		String src = loc.getSource(source);
+		TemplateElement elm = new TemplateElement(loc, node.get("text").getAsString(), src.substring(1, src.length()-1), true);
 		quasis.add(elm);
 		attachStaticType(elm, node);
 		return new TemplateLiteral(loc, new ArrayList<>(), quasis);
 	}
 
 	private Node convertNullKeyword(SourceLocation loc) {
-		return new Literal(loc, TokenType._null, null);
+		return new Literal(loc, TokenType._null, null, "null");
 	}
 
 	private Node convertObjectBindingPattern(JsonObject node,
@@ -1794,7 +1796,6 @@ public class TypeScriptASTConverter {
 					endLoc = getSourceLocation(param.get("name").getAsJsonObject());
 				}
 				loc.setEnd(endLoc.getEnd());
-				loc.setSource(source.substring(loc.getStart().getOffset(), loc.getEnd().getOffset()));
 			}
 			FieldDefinition field = new FieldDefinition(loc, flags, null, null, null, index);
 			result.add(field);
@@ -1892,7 +1893,7 @@ public class TypeScriptASTConverter {
 	}
 
 	private Node convertRegularExpressionLiteral(SourceLocation loc) {
-		return new Literal(loc, TokenType.regexp, null);
+		return new Literal(loc, TokenType.regexp, null, "");
 	}
 
 	private Node convertRestType(JsonObject node, SourceLocation loc) throws ParseError {
@@ -1930,7 +1931,8 @@ public class TypeScriptASTConverter {
 	}
 
 	private Node convertStringLiteral(JsonObject node, SourceLocation loc) {
-		return new Literal(loc, TokenType.string, node.get("text").getAsString());
+		String text = node.get("text").getAsString();
+		return new Literal(loc, TokenType.string, text, text);
 	}
 
 	private Node convertSuperKeyword(SourceLocation loc) {
@@ -1964,22 +1966,20 @@ public class TypeScriptASTConverter {
 	private Node convertTemplateElement(JsonObject node, String kind,
 			SourceLocation loc) {
 		boolean tail = "TemplateTail".equals(kind);
-		if (loc.getSource().startsWith("`") || loc.getSource().startsWith("}")) {
-			loc.setSource(loc.getSource().substring(1));
+		String src = loc.getSource(source);
+		if (src.startsWith("`") || src.startsWith("}")) {
 			Position start = loc.getStart();
 			loc.setStart(new Position(start.getLine(), start.getColumn()+1, start.getColumn()+1));
 		}
-		if (loc.getSource().endsWith("${")) {
-			loc.setSource(loc.getSource().substring(0, loc.getSource().length()-2));
+		if (src.endsWith("${")) {
 			Position end = loc.getEnd();
 			loc.setEnd(new Position(end.getLine(), end.getColumn()-2, end.getColumn()-2));
 		}
-		if (loc.getSource().endsWith("`")) {
-			loc.setSource(loc.getSource().substring(0, loc.getSource().length()-1));
+		if (src.endsWith("`")) {
 			Position end = loc.getEnd();
 			loc.setEnd(new Position(end.getLine(), end.getColumn()-1, end.getColumn()-1));
 		}
-		return new TemplateElement(loc, node.get("text").getAsString(), loc.getSource(), tail);
+		return new TemplateElement(loc, node.get("text").getAsString(), src, tail);
 	}
 
 	private Node convertThisKeyword(SourceLocation loc) {
@@ -1994,7 +1994,7 @@ public class TypeScriptASTConverter {
 	}
 
 	private Node convertTrueKeyword(SourceLocation loc) {
-		return new Literal(loc, TokenType._true, true);
+		return new Literal(loc, TokenType._true, true, "true");
 	}
 
 	private Node convertTryStatement(JsonObject node, SourceLocation loc) throws ParseError {
@@ -2162,10 +2162,10 @@ public class TypeScriptASTConverter {
 	 * advanced past these using {@link #advanceUntilAfter}.
 	 */
 	private Node fixExports(SourceLocation loc, Statement decl) {
-		Matcher m = EXPORT_DECL_START.matcher(loc.getSource());
+		Matcher m = EXPORT_DECL_START.matcher(loc.getSource(source));
 		if (m.find()) {
 			String skipped = m.group(0);
-			SourceLocation outerLoc = new SourceLocation(loc.getSource(), loc.getStart(), loc.getEnd());
+			SourceLocation outerLoc = new SourceLocation(loc.getStart(), loc.getEnd());
 			advance(loc, skipped);
 			// capture group 1 is `default`, if present
 			if (m.group(1) == null)
@@ -2196,7 +2196,6 @@ public class TypeScriptASTConverter {
 	 */
 	private void advance(SourceLocation loc, String skipped) {
 		loc.setStart(advance(loc.getStart(), skipped));
-		loc.setSource(loc.getSource().substring(skipped.length()));
 	}
 
 	/**
@@ -2212,10 +2211,9 @@ public class TypeScriptASTConverter {
 		if (offset <= 0)
 			return;
 		offset += matchWhitespace(last.getLoc().getEnd().getOffset()).length();
-		if (offset >= loc.getSource().length())
+		if (offset >= loc.getSource(source).length())
 			return;
-		loc.setStart(advance(loc.getStart(), loc.getSource().substring(0, offset)));
-		loc.setSource(loc.getSource().substring(offset));
+		loc.setStart(advance(loc.getStart(), loc.getSource(source).substring(0, offset)));
 	}
 
 	/**
@@ -2261,7 +2259,7 @@ public class TypeScriptASTConverter {
 			startOffset = endOffset;
 		if (endOffset > source.length())
 			endOffset = source.length();
-		return new SourceLocation(source.substring(startOffset, endOffset), start, end);
+		return new SourceLocation(start, end);
 	}
 
 	/**

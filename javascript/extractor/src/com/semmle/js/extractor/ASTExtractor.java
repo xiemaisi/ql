@@ -506,7 +506,7 @@ public class ASTExtractor {
 		@Override
 		public Label visit(Literal nd, Context c) {
 			Label key = super.visit(nd, c);
-			String source = nd.getLoc().getSource();
+			String source = nd.getRaw();
 			String valueString = nd.getStringValue();
 
 			trapwriter.addTuple("literals", valueString, source, key);
@@ -1238,48 +1238,46 @@ public class ASTExtractor {
 			Position loc = classBody.getLoc().getStart();
 
 			// fake identifier `constructor`
-			SourceLocation idLoc = fakeLoc("constructor", loc);
+			SourceLocation idLoc = emptyLoc(loc);
 			Identifier id = new Identifier(idLoc, "constructor");
 
 			// fake body `{}` or `{ super(...args); }`
 			boolean hasSuperClass = ac.hasSuperClass();
-			SourceLocation bodyLoc = fakeLoc(hasSuperClass ? "{ super(...args); }" : "{}", loc);
+			SourceLocation bodyLoc = emptyLoc(loc);
 			BlockStatement body = new BlockStatement(bodyLoc, new ArrayList<Statement>());
 			if (hasSuperClass) {
-				Identifier argsRef = new Identifier(fakeLoc("args", loc), "args");
-				SpreadElement spreadArgs = new SpreadElement(fakeLoc("...args", loc), argsRef);
-				Super superExpr = new Super(fakeLoc("super", loc));
+				Identifier argsRef = new Identifier(emptyLoc(loc), "args");
+				SpreadElement spreadArgs = new SpreadElement(emptyLoc(loc), argsRef);
+				Super superExpr = new Super(emptyLoc(loc));
 				CallExpression superCall = new CallExpression(
-						fakeLoc("super(...args)", loc),
+						emptyLoc(loc),
 						superExpr, new ArrayList<>(), CollectionUtil.makeList(spreadArgs), false, false);
 				ExpressionStatement superCallStmt = new ExpressionStatement(
-						fakeLoc("super(...args);", loc), superCall);
+						emptyLoc(loc), superCall);
 				body.getBody().add(superCallStmt);
 			}
 
 			// fake method definition `() {}` or `(...args) { super(...args); }`
 			List<Expression> params = new ArrayList<>();
 			if (hasSuperClass) {
-				Identifier argsDecl = new Identifier(fakeLoc("args", loc), "args");
-				RestElement restArgs = new RestElement(fakeLoc("...args", loc), argsDecl);
+				Identifier argsDecl = new Identifier(emptyLoc(loc), "args");
+				RestElement restArgs = new RestElement(emptyLoc(loc), argsDecl);
 				params.add(restArgs);
 			}
 			AFunction<BlockStatement> fndef = new AFunction<>(null, params, body, false, false, Collections.emptyList(),
 					Collections.emptyList(), Collections.emptyList(), null, null);
-			String fnSrc = hasSuperClass ? "(...args) { super(...args); }" : "() {}";
-			SourceLocation fnloc = fakeLoc(fnSrc, loc);
+			SourceLocation fnloc = emptyLoc(loc);
 			FunctionExpression fn = new FunctionExpression(fnloc, fndef);
 
 			// fake constructor definition `constructor() {}`
 			// or `constructor(...args) { super(...args); }`
-			String ctorSrc = hasSuperClass ? "constructor(...args) { super(...args); }" : "constructor() {}";
-			SourceLocation ctorloc = fakeLoc(ctorSrc, loc);
+			SourceLocation ctorloc = emptyLoc(loc);
 			MethodDefinition ctor = new MethodDefinition(ctorloc, DeclarationFlags.none, Kind.CONSTRUCTOR, id, fn);
 			classBody.addMember(ctor);
 		}
 
-		private SourceLocation fakeLoc(String src, Position loc) {
-			return new SourceLocation(src, loc, loc);
+		private SourceLocation emptyLoc(Position loc) {
+			return new SourceLocation(loc, loc);
 		}
 
 		/** The constructors of all enclosing classes. */

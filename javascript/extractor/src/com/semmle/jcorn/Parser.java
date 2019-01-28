@@ -456,7 +456,7 @@ public class Parser {
 
 	private Token mkToken() {
 		String src = inputSubstring(start, end);
-		SourceLocation loc = new SourceLocation(src, startLoc, endLoc);
+		SourceLocation loc = new SourceLocation(startLoc, endLoc);
 		String label, keyword;
 		if (isKeyword(src)) {
 			label = keyword = src;
@@ -464,7 +464,7 @@ public class Parser {
 			label = type.label;
 			keyword = type.keyword;
 		}
-		return new Token(loc, label, keyword);
+		return new Token(loc, label, keyword, src);
 	}
 
 	protected boolean isKeyword(String src) {
@@ -1217,9 +1217,7 @@ public class Parser {
 	}
 
 	protected <T extends INode> T finishNodeAt(T node, Position pos) {
-		SourceLocation loc = node.getLoc();
-		loc.setSource(inputSubstring(loc.getStart().getOffset(), pos.getOffset()));
-		loc.setEnd(pos);
+		node.getLoc().setEnd(pos);
 		return node;
 	}
 
@@ -1566,7 +1564,7 @@ public class Parser {
 			return this.parseLiteral(this.type, this.value);
 		} else if (this.type == TokenType._null || this.type == TokenType._true || this.type == TokenType._false) {
 			Object val = this.type == TokenType._null ? null : this.type == TokenType._true;
-			node = new Literal(new SourceLocation(this.type.keyword, startLoc), this.type, val);
+			node = new Literal(new SourceLocation(startLoc), this.type, val, this.type.keyword);
 			this.next();
 			return this.finishNode(node);
 		} else if (this.type == TokenType.parenL) {
@@ -1596,8 +1594,8 @@ public class Parser {
 	}
 
 	protected Literal parseLiteral(TokenType tokenType, Object value) {
-		SourceLocation loc = new SourceLocation(inputSubstring(this.start, this.end), this.startLoc);
-		Literal node = new Literal(loc, tokenType, value);
+		SourceLocation loc = new SourceLocation(this.startLoc);
+		Literal node = new Literal(loc, tokenType, value, inputSubstring(this.start, this.end));
 		this.next();
 		return this.finishNode(node);
 	}
