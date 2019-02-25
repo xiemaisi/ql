@@ -24,9 +24,18 @@ class SourceNode extends DataFlow::Node {
    */
   cached
   predicate flowsTo(DataFlow::Node sink) {
-    sink = this or
+    isSameAs(sink)
+    or
     flowsTo(sink.getAPredecessor())
   }
+
+  /**
+   * Holds if this is the same as `sink`.
+   *
+   * This auxiliary predicate is currently needed to work around an optimizer quirk.
+   */
+  pragma[noinline]
+  private predicate isSameAs(DataFlow::Node sink) { this = sink }
 
   /**
    * Holds if this node flows into `sink` in zero or more local (that is,
