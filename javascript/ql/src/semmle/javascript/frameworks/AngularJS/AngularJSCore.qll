@@ -23,16 +23,38 @@ DataFlow::SourceNode angular() {
   result = DataFlow::moduleImport("angular")
 }
 
-pragma[noopt]
+/**
+ * Holds if `tl` contains the identifier or string `"angular"`, which heuristically
+ * suggests that it may contain Angular code.
+ */
+private predicate mentionsAngular(TopLevel tl) {
+  exists(Identifier id | id.getName() = "angular" | tl = id.getTopLevel())
+  or
+  exists(Expr lit |
+    stringLitInTopLevel(lit, tl) and
+    lit.getStringValue() = "angular"
+  )
+}
+
+/**
+ * Holds if `e` is a string or template literal in `tl`.
+ */
+private predicate stringLitInTopLevel(Expr e, TopLevel tl) {
+  e.getTopLevel() = tl and
+  (
+    e instanceof StringLiteral or
+    e instanceof TemplateLiteral
+  )
+}
+
+/**
+ * Holds if `e` is a string or template literal in a toplevel that may contain
+ * Angular code.
+ */
 private predicate isAngularString(Expr s) {
-  exists(DataFlow::SourceNode angular, StmtContainer sc, TopLevel tl |
-    angular = angular() and
-    sc = angular.getContainer() and
-    tl = sc.getTopLevel() and
-    tl = s.getTopLevel()
-  |
-    s instanceof StringLiteral or
-    s instanceof TemplateLiteral
+  exists(TopLevel tl |
+    stringLitInTopLevel(s, tl) and
+    mentionsAngular(tl)
   )
 }
 
