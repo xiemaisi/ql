@@ -22,5 +22,5 @@ where
     s.getPropertyName().regexpMatch("(?i).*(csrf|state|token).*")
   )
 select cmp,
-  "This comparison of $@ and $@ is a potential security risk since it is controlled by the user.",
-  lSource, lSource.toString(), rSource, rSource.toString()
+  "This comparison of $@ with $@ is a potential security risk since its outcome controlled by the user.",
+  lSource, "one user-provided value", rSource, "another"
