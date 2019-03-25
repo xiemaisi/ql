@@ -602,6 +602,8 @@ class Parameter extends BindingPattern {
   JSDocTag getJSDocTag() {
     none() // overridden in SimpleParameter
   }
+
+  override DataFlow::Node flow() { result = DataFlow::parameterNode(this) }
 }
 
 /** A parameter declaration that is not an object or array pattern. */

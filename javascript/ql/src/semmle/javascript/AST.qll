@@ -314,6 +314,6 @@ module AST {
     DataFlow::AnalyzedNode analyze() { result = DataFlow::valueNode(this).analyze() }
 
     /** Gets the data flow node associated with this program element. */
-    DataFlow::ValueNode flow() { result = DataFlow::valueNode(this) }
+    DataFlow::Node flow() { result = DataFlow::valueNode(this) }
   }
 }
