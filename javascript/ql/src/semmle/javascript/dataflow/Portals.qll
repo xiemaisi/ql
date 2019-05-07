@@ -254,7 +254,7 @@ private class MemberPortal extends CompoundPortal, MkMemberPortal {
     MemberPortal::writes(base, prop, result, escapes)
   }
 
-  override string toString() { result = "(member " + prop + " " + base + ")" }
+  override string toString() { result = "(member " + base + " " + prop + ")" }
 }
 
 private module MemberPortal {
@@ -409,7 +409,7 @@ class ParameterPortal extends CompoundPortal, MkParameterPortal {
     ParameterPortal::argument(base, i, result, escapes)
   }
 
-  override string toString() { result = "(parameter " + i + " " + base + ")" }
+  override string toString() { result = "(parameter " + base + " " + i + ")" }
 }
 
 private module ParameterPortal {
