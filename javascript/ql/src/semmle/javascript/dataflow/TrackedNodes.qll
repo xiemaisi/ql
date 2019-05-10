@@ -73,10 +73,6 @@ private module NodeTracking {
       propertyFlowStep(pred, succ) and
       summary = PathSummary::level()
       or
-      // Flow through global variables
-      globalFlowStep(pred, succ) and
-      summary = PathSummary::level()
-      or
       // Flow into function
       callStep(pred, succ) and
       summary = PathSummary::call()

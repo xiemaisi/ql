@@ -1020,6 +1020,31 @@ module DataFlow {
   }
 
   /**
+   * Gets a node whose value is assigned to `gv` in `f`.
+   */
+  pragma[noinline]
+  private DataFlow::ValueNode getADefIn(GlobalVariable gv, File f) {
+    exists(VarDef def |
+      def.getFile() = f and
+      def.getTarget() = gv.getAReference() and
+      result = DataFlow::valueNode(def.getSource())
+    )
+  }
+
+  /**
+   * Gets a use of `gv` in `f`.
+   */
+  pragma[noinline]
+  private DataFlow::ValueNode getAUseIn(GlobalVariable gv, File f) {
+    exists(GlobalVarAccess gva |
+      gva = gv.getAnAccess() and
+      gva.getFile() = f and
+      result = DataFlow::valueNode(gva)
+    )
+  }
+
+
+  /**
    * Holds if data can flow from `pred` to `succ` in one local step.
    */
   cached
@@ -1087,6 +1112,12 @@ module DataFlow {
     exists(ThisExpr thiz |
       pred = TThisNode(thiz.getBindingContainer()) and
       succ = valueNode(thiz)
+    )
+    or
+    // flow through global variable in same file
+    exists(GlobalVariable gv, File f |
+      pred = getADefIn(gv, f) and
+      succ = getAUseIn(gv, f)
     )
   }
 

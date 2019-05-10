@@ -160,36 +160,12 @@ private module CachedSteps {
   }
 
   /**
-   * Gets a node whose value is assigned to `gv` in `f`.
-   */
-  pragma[noinline]
-  private DataFlow::ValueNode getADefIn(GlobalVariable gv, File f) {
-    exists(VarDef def |
-      def.getFile() = f and
-      def.getTarget() = gv.getAReference() and
-      result = DataFlow::valueNode(def.getSource())
-    )
-  }
-
-  /**
    * Gets a use of `gv` in `f`.
    */
   pragma[noinline]
   private DataFlow::ValueNode getAUseIn(GlobalVariable gv, File f) {
     result.getFile() = f and
     result = DataFlow::valueNode(gv.getAnAccess())
-  }
-
-  /**
-   * Holds if there is a flow step from `pred` to `succ` through a global
-   * variable. Both `pred` and `succ` must be in the same file.
-   */
-  cached
-  predicate globalFlowStep(DataFlow::Node pred, DataFlow::Node succ) {
-    exists(GlobalVariable gv, File f |
-      pred = getADefIn(gv, f) and
-      succ = getAUseIn(gv, f)
-    )
   }
 
   /**

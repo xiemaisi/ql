@@ -63,10 +63,6 @@ module StepSummary {
     propertyFlowStep(pred, succ) and
     summary = LevelStep()
     or
-    // Flow through global variables
-    globalFlowStep(pred, succ) and
-    summary = LevelStep()
-    or
     // Flow into function
     callStep(pred, succ) and
     summary = CallStep()
