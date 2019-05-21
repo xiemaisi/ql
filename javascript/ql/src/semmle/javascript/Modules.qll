@@ -175,10 +175,8 @@ abstract class Import extends ASTNode {
     File f, string abspath, PathString imported, string dirname, string basename
   ) {
     imported = getImportedPath().getValue() and
-    // exclude one-element paths, for which guessing based on absolute paths is too error-prone
-    imported.matches("%/%") and
     f.getStem() = imported.getStem() and
-    f.getAbsolutePath() = abspath and
+    abspath = f.getAbsolutePath() and
     dirname = imported.getDirName() and
     basename = imported.getBaseName()
   }
@@ -188,7 +186,19 @@ abstract class Import extends ASTNode {
    */
   private Module resolveByAbsolutePath() {
     count(guessTarget()) = 1 and
-    result.getFile() = guessTarget()
+    exists(File target | target = guessTarget() |
+      // for one-element paths, we restrict `f` to be in a parent folder of the importing module to
+      // avoid false positives
+      (
+        getImportedPath().getValue().matches("%/%") or
+        exists(File source | source = this.getFile() |
+          target.getParentContainer() = source.getParentContainer+() and
+          // self-imports are unlikely
+          target != source
+        )
+      ) and
+      result.getFile() = target
+    )
   }
 
   /**
