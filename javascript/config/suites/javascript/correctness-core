@@ -14,6 +14,7 @@
 + semmlecode-javascript-queries/Expressions/CompareIdenticalValues.ql: /Correctness/Expressions
 + semmlecode-javascript-queries/Expressions/DuplicateCondition.ql: /Correctness/Expressions
 + semmlecode-javascript-queries/Expressions/DuplicateSwitchCase.ql: /Correctness/Expressions
++ semmlecode-javascript-queries/Expressions/ExponentiationTypo.ql: /Correctness/Expressions
 + semmlecode-javascript-queries/Expressions/HeterogeneousComparison.ql: /Correctness/Expressions
 + semmlecode-javascript-queries/Expressions/MisspelledVariableName.ql: /Correctness/Expressions
 + semmlecode-javascript-queries/Expressions/MissingDotLengthInComparison.ql: /Correctness/Expressions
