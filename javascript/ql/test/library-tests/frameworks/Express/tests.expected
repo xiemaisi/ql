@@ -773,7 +773,38 @@ test_ResponseSendArgument
 test_RouteSetup_getARouteHandler
 | src/auth.js:4:1:4:53 | app.use ... d' }})) | src/auth.js:4:9:4:52 | basicAu ... rd' }}) |
 | src/csurf-example.js:13:1:13:20 | app.use('/api', api) | src/csurf-example.js:10:11:10:27 | createApiRouter() |
+| src/csurf-example.js:13:1:13:20 | app.use('/api', api) | src/csurf-example.js:20:18:20:17 | this |
+| src/csurf-example.js:13:1:13:20 | app.use('/api', api) | src/csurf-example.js:25:22:25:21 | this |
+| src/csurf-example.js:13:1:13:20 | app.use('/api', api) | src/csurf-example.js:29:1:29:0 | this |
 | src/csurf-example.js:13:1:13:20 | app.use('/api', api) | src/csurf-example.js:30:16:30:35 | new express.Router() |
+| src/csurf-example.js:13:1:13:20 | app.use('/api', api) | src/csurf-example.js:32:30:32:29 | this |
+| src/csurf-example.js:13:1:13:20 | app.use('/api', api) | src/csurf-example.js:39:26:39:25 | this |
+| src/csurf-example.js:13:1:13:20 | app.use('/api', api) | src/csurf-example.js:40:27:40:26 | this |
+| src/csurf-example.js:13:1:13:20 | app.use('/api', api) | src/exportedHandler.js:1:19:1:18 | this |
+| src/csurf-example.js:13:1:13:20 | app.use('/api', api) | src/express2.js:3:25:3:24 | this |
+| src/csurf-example.js:13:1:13:20 | app.use('/api', api) | src/express2.js:4:32:4:31 | this |
+| src/csurf-example.js:13:1:13:20 | app.use('/api', api) | src/express3.js:4:23:4:22 | this |
+| src/csurf-example.js:13:1:13:20 | app.use('/api', api) | src/express3.js:9:1:9:0 | this |
+| src/csurf-example.js:13:1:13:20 | app.use('/api', api) | src/express3.js:10:12:10:11 | this |
+| src/csurf-example.js:13:1:13:20 | app.use('/api', api) | src/express4.js:4:23:4:22 | this |
+| src/csurf-example.js:13:1:13:20 | app.use('/api', api) | src/express.js:4:23:4:22 | this |
+| src/csurf-example.js:13:1:13:20 | app.use('/api', api) | src/express.js:11:1:11:0 | this |
+| src/csurf-example.js:13:1:13:20 | app.use('/api', api) | src/express.js:15:1:15:0 | this |
+| src/csurf-example.js:13:1:13:20 | app.use('/api', api) | src/express.js:16:19:16:18 | this |
+| src/csurf-example.js:13:1:13:20 | app.use('/api', api) | src/express.js:22:30:22:29 | this |
+| src/csurf-example.js:13:1:13:20 | app.use('/api', api) | src/express.js:36:1:36:0 | this |
+| src/csurf-example.js:13:1:13:20 | app.use('/api', api) | src/express.js:37:12:37:11 | this |
+| src/csurf-example.js:13:1:13:20 | app.use('/api', api) | src/express.js:41:1:41:0 | this |
+| src/csurf-example.js:13:1:13:20 | app.use('/api', api) | src/express.js:46:22:46:21 | this |
+| src/csurf-example.js:13:1:13:20 | app.use('/api', api) | src/inheritedFromNode.js:4:15:4:14 | this |
+| src/csurf-example.js:13:1:13:20 | app.use('/api', api) | src/responseExprs.js:4:23:4:22 | this |
+| src/csurf-example.js:13:1:13:20 | app.use('/api', api) | src/responseExprs.js:7:23:7:22 | this |
+| src/csurf-example.js:13:1:13:20 | app.use('/api', api) | src/responseExprs.js:10:23:10:22 | this |
+| src/csurf-example.js:13:1:13:20 | app.use('/api', api) | src/responseExprs.js:13:23:13:22 | this |
+| src/csurf-example.js:13:1:13:20 | app.use('/api', api) | src/responseExprs.js:16:30:16:29 | this |
+| src/csurf-example.js:13:1:13:20 | app.use('/api', api) | src/responseExprs.js:39:5:39:4 | this |
+| src/csurf-example.js:13:1:13:20 | app.use('/api', api) | src/route.js:5:12:5:11 | this |
+| src/csurf-example.js:13:1:13:20 | app.use('/api', api) | src/subrouter.js:7:1:7:0 | this |
 | src/csurf-example.js:16:1:16:51 | app.use ... lse })) | src/csurf-example.js:16:9:16:50 | bodyPar ... alse }) |
 | src/csurf-example.js:17:1:17:23 | app.use ... rser()) | src/csurf-example.js:17:9:17:22 | cookieParser() |
 | src/csurf-example.js:18:1:18:31 | app.use ... rue })) | src/csurf-example.js:18:9:18:30 | csrf({  ... true }) |

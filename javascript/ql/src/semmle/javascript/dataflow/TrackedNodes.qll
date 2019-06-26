@@ -232,7 +232,7 @@ private module NodeTracking {
   ) {
     exists(
       Function f, DataFlow::InvokeNode outer, DataFlow::InvokeNode inner, int j,
-      DataFlow::Node innerArg, DataFlow::ParameterNode cbParm, PathSummary oldSummary
+      DataFlow::Node innerArg, DataFlow::SourceNode cbParm, PathSummary oldSummary
     |
       reachableFromInput(f, outer, arg, innerArg, oldSummary) and
       argumentPassing(outer, cb, f, cbParm) and
