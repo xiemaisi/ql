@@ -192,6 +192,19 @@ private module NodeTracking {
   }
 
   /**
+   * Holds if property `prop` of `pred` may flow into `succ` either directly or
+   * through a simple getter function.
+   */
+  private predicate loadStep(DataFlow::Node pred, DataFlow::Node succ, string prop) {
+    basicLoadStep(pred, succ, prop)
+    or
+    exists (Function f, DataFlow::SourceNode parm |
+      callInputStep(f, succ, pred, parm) and
+      returnExpr(f, parm.getAPropertyRead(prop), _)
+    )
+  }
+
+  /**
    * Holds if `rhs` is the right-hand side of a write to property `prop`, and `nd` is reachable
    * from the base of that write (possibly through callees) along a path summarized by `summary`.
    */
@@ -218,7 +231,7 @@ private module NodeTracking {
   ) {
     exists(string prop, DataFlow::Node base |
       reachableFromStoreBase(prop, pred, base, summary) and
-      basicLoadStep(base, succ, prop)
+      loadStep(base, succ, prop)
     )
   }
 

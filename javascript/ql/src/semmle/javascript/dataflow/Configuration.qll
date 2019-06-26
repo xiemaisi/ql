@@ -698,6 +698,21 @@ private predicate storeStep(
 }
 
 /**
+ * Holds if property `prop` of `pred` may flow into `succ` either directly or
+ * through a simple getter function.
+ */
+private predicate loadStep(
+  DataFlow::Node pred, DataFlow::Node succ, string prop, DataFlow::Configuration cfg
+) {
+  basicLoadStep(pred, succ, prop)
+  or
+  exists(Function f, DataFlow::SourceNode parm |
+    callInputStep(f, succ, pred, parm, cfg) and
+    returnExpr(f, parm.getAPropertyRead(prop), _)
+  )
+}
+
+/**
  * Holds if `rhs` is the right-hand side of a write to property `prop`, and `nd` is reachable
  * from the base of that write under configuration `cfg` (possibly through callees) along a
  * path summarized by `summary`.
@@ -727,7 +742,7 @@ private predicate flowThroughProperty(
   DataFlow::Node pred, DataFlow::Node succ, DataFlow::Configuration cfg, PathSummary summary
 ) {
   exists(string prop, DataFlow::Node base | reachableFromStoreBase(prop, pred, base, cfg, summary) |
-    basicLoadStep(base, succ, prop)
+    loadStep(base, succ, prop, cfg)
   )
 }
 
