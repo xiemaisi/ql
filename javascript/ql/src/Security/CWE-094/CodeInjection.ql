@@ -15,6 +15,16 @@
 import javascript
 import semmle.javascript.security.dataflow.CodeInjection::CodeInjection
 import DataFlow::PathGraph
+import semmle.javascript.dataflow.Portals
+import Security.InterestingPortals
+
+class ConfigurationOverride extends Configuration {
+  override predicate isSink(DataFlow::Node sink) {
+    exists(Portal p | isInteresting(p.toString(), this) and
+      sink = p.getAnEntryNode(_)
+    )
+  }
+}
 
 from Configuration cfg, DataFlow::PathNode source, DataFlow::PathNode sink
 where cfg.hasFlowPath(source, sink)

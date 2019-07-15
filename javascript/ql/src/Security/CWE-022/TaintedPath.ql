@@ -17,6 +17,22 @@
 import javascript
 import semmle.javascript.security.dataflow.TaintedPath::TaintedPath
 import DataFlow::PathGraph
+import semmle.javascript.dataflow.Portals
+import Security.InterestingPortals
+
+class ConfigurationOverride extends Configuration {
+  override predicate isSink(DataFlow::Node sink, DataFlow::FlowLabel label) {
+    exists(Portal p | isInteresting(p.toString(), this) and
+      sink = p.getAnEntryNode(_)
+    ) and
+    label instanceof Label::PosixPath
+    or
+    exists(Portal p |
+      p.toString() = "(parameter 2 (member composeWith (member prototype (member Base (root https://www.npmjs.com/package/yeoman-generator)))))" and
+      sink = p.getAnEntryNode(_).getALocalSource().getAPropertyWrite().getRhs()
+    )
+  }
+}
 
 from Configuration cfg, DataFlow::PathNode source, DataFlow::PathNode sink
 where cfg.hasFlowPath(source, sink)

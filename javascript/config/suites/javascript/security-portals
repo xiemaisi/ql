@@ -1,0 +1,4 @@
++ semmlecode-javascript-queries/Security/CWE-094/CodeInjection.ql: /Security/CWE/CWE-094
++ semmlecode-javascript-queries/Security/CWE-078/CommandInjection.ql: /Security/CWE/CWE-078
++ semmlecode-javascript-queries/Security/CWE-022/TaintedPath.ql: /Security/CWE/CWE-022
++ semmlecode-javascript-queries/Security/CWE-730/RegExpInjection.ql: /Security/CWE/CWE-730
