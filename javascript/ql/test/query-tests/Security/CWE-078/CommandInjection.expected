@@ -42,6 +42,8 @@ nodes
 | execSeries.js:13:19:13:26 | commands |
 | execSeries.js:14:13:14:20 | commands |
 | execSeries.js:14:24:14:30 | command |
+| execSeries.js:14:24:14:30 | command |
+| execSeries.js:14:41:14:47 | command |
 | execSeries.js:14:41:14:47 | command |
 | execSeries.js:18:7:18:58 | cmd |
 | execSeries.js:18:13:18:47 | require ... , true) |
@@ -107,9 +109,11 @@ edges
 | execSeries.js:5:4:5:3 | arr | execSeries.js:6:14:6:16 | arr |
 | execSeries.js:6:14:6:16 | arr | execSeries.js:6:14:6:21 | arr[i++] |
 | execSeries.js:6:14:6:21 | arr[i++] | execSeries.js:14:24:14:30 | command |
+| execSeries.js:6:14:6:21 | arr[i++] | execSeries.js:14:24:14:30 | command |
 | execSeries.js:13:19:13:26 | commands | execSeries.js:14:13:14:20 | commands |
 | execSeries.js:14:13:14:20 | commands | execSeries.js:3:20:3:22 | arr |
 | execSeries.js:14:13:14:20 | commands | execSeries.js:14:24:14:30 | command |
+| execSeries.js:14:24:14:30 | command | execSeries.js:14:41:14:47 | command |
 | execSeries.js:14:24:14:30 | command | execSeries.js:14:41:14:47 | command |
 | execSeries.js:18:7:18:58 | cmd | execSeries.js:19:13:19:15 | cmd |
 | execSeries.js:18:13:18:47 | require ... , true) | execSeries.js:18:13:18:53 | require ... ).query |
@@ -147,6 +151,7 @@ edges
 | child_process-test.js:44:5:44:34 | cp.exec ... , args) | child_process-test.js:6:25:6:31 | req.url | child_process-test.js:43:15:43:17 | cmd | This command depends on $@. | child_process-test.js:6:25:6:31 | req.url | a user-provided value |
 | child_process-test.js:51:5:51:39 | cp.exec ... , args) | child_process-test.js:6:25:6:31 | req.url | child_process-test.js:50:15:50:17 | cmd | This command depends on $@. | child_process-test.js:6:25:6:31 | req.url | a user-provided value |
 | child_process-test.js:56:3:56:21 | cp.spawn(cmd, args) | child_process-test.js:6:25:6:31 | req.url | child_process-test.js:43:15:43:17 | cmd | This command depends on $@. | child_process-test.js:6:25:6:31 | req.url | a user-provided value |
+| execSeries.js:14:41:14:47 | command | execSeries.js:18:34:18:40 | req.url | execSeries.js:14:41:14:47 | command | This command depends on $@. | execSeries.js:18:34:18:40 | req.url | a user-provided value |
 | execSeries.js:14:41:14:47 | command | execSeries.js:18:34:18:40 | req.url | execSeries.js:14:41:14:47 | command | This command depends on $@. | execSeries.js:18:34:18:40 | req.url | a user-provided value |
 | other.js:7:33:7:35 | cmd | other.js:5:25:5:31 | req.url | other.js:7:33:7:35 | cmd | This command depends on $@. | other.js:5:25:5:31 | req.url | a user-provided value |
 | other.js:8:28:8:30 | cmd | other.js:5:25:5:31 | req.url | other.js:8:28:8:30 | cmd | This command depends on $@. | other.js:5:25:5:31 | req.url | a user-provided value |

@@ -508,10 +508,10 @@ private predicate basicFlowStep(
   isRelevantForward(pred, cfg) and
   (
     // Local flow
-    exists(FlowLabel predlbl, FlowLabel succlbl |
-      localFlowStep(pred, succ, cfg, predlbl, succlbl) and
+    exists(FlowLabel predlbl, FlowLabel succlbl, boolean jump |
+      localFlowStep(pred, succ, cfg, predlbl, succlbl, jump) and
       not cfg.isBarrierEdge(pred, succ, predlbl) and
-      summary = MkPathSummary(false, false, predlbl, succlbl)
+      summary = MkPathSummary(jump, false, false, predlbl, succlbl)
     )
     or
     // Flow through properties of objects
@@ -520,7 +520,7 @@ private predicate basicFlowStep(
     or
     // Flow through global variables
     globalFlowStep(pred, succ) and
-    summary = PathSummary::level()
+    summary = PathSummary::jump()
     or
     // Flow into function
     callStep(pred, succ) and
@@ -611,18 +611,8 @@ private predicate callInputStep(
   Function f, DataFlow::Node invk, DataFlow::Node pred, DataFlow::Node succ,
   DataFlow::Configuration cfg
 ) {
-  (
-    isRelevant(pred, cfg) and
-    argumentPassing(invk, pred, f, succ)
-    or
-    isRelevant(pred, cfg) and
-    exists(SsaDefinition prevDef, SsaDefinition def |
-      pred = DataFlow::ssaDefinitionNode(prevDef) and
-      calls(invk, f) and
-      captures(f, prevDef, def) and
-      succ = DataFlow::ssaDefinitionNode(def)
-    )
-  ) and
+  isRelevant(pred, cfg) and
+  argumentPassing(invk, pred, f, succ) and
   not cfg.isBarrier(succ) and
   not cfg.isBarrierEdge(pred, succ)
 }

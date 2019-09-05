@@ -33,13 +33,18 @@ predicate returnExpr(Function f, DataFlow::Node source, DataFlow::Node sink) {
 pragma[inline]
 predicate localFlowStep(
   DataFlow::Node pred, DataFlow::Node succ, DataFlow::Configuration configuration,
-  FlowLabel predlbl, FlowLabel succlbl
+  FlowLabel predlbl, FlowLabel succlbl, boolean jump
 ) {
-  pred = succ.getAPredecessor() and predlbl = succlbl
+  pred = succ.getAPredecessor() and
+  predlbl = succlbl and
+  (if succ = DataFlow::ssaDefinitionNode(any(SsaVariableCapture cap)) then
+     jump = true
+   else
+     jump = false)
   or
-  any(DataFlow::AdditionalFlowStep afs).step(pred, succ) and predlbl = succlbl
+  any(DataFlow::AdditionalFlowStep afs).step(pred, succ) and predlbl = succlbl and jump = false
   or
-  any(DataFlow::AdditionalFlowStep afs).step(pred, succ, predlbl, succlbl)
+  any(DataFlow::AdditionalFlowStep afs).step(pred, succ, predlbl, succlbl) and jump = false
   or
   exists(boolean vp | configuration.isAdditionalFlowStep(pred, succ, vp) |
     vp = true and
@@ -48,12 +53,13 @@ predicate localFlowStep(
     vp = false and
     (predlbl = FlowLabel::data() or predlbl = FlowLabel::taint()) and
     succlbl = FlowLabel::taint()
-  )
+  ) and jump = false
   or
-  configuration.isAdditionalFlowStep(pred, succ, predlbl, succlbl)
+  configuration.isAdditionalFlowStep(pred, succ, predlbl, succlbl) and jump = false
   or
   localExceptionStep(pred, succ) and
-  predlbl = succlbl
+  predlbl = succlbl and
+  jump = false
 }
 
 /**
@@ -416,7 +422,7 @@ class Boolean extends boolean {
  */
 newtype TPathSummary =
   /** A summary of an inter-procedural data flow path. */
-  MkPathSummary(Boolean hasReturn, Boolean hasCall, FlowLabel start, FlowLabel end)
+  MkPathSummary(Boolean hasJump, Boolean hasReturn, Boolean hasCall, FlowLabel start, FlowLabel end)
 
 /**
  * A summary of an inter-procedural data flow path.
@@ -428,8 +434,14 @@ newtype TPathSummary =
  *
  * We only want to build properly matched call/return sequences, so if a path has both
  * call steps and return steps, all return steps must precede all call steps.
+ *
+ * Finally, paths may contain one or more "jump" steps that reset the calling context;
+ * they must come before any call/return steps (since any steps that precede them would
+ * have been reset).
  */
 class PathSummary extends TPathSummary {
+  Boolean hasJump;
+
   Boolean hasReturn;
 
   Boolean hasCall;
@@ -438,7 +450,10 @@ class PathSummary extends TPathSummary {
 
   FlowLabel end;
 
-  PathSummary() { this = MkPathSummary(hasReturn, hasCall, start, end) }
+  PathSummary() { this = MkPathSummary(hasJump, hasReturn, hasCall, start, end) }
+
+  /** Indicates whether the path represented by this summary contains any context-resetting jump steps. */
+  boolean hasJump() { result = hasJump }
 
   /** Indicates whether the path represented by this summary contains any unmatched return steps. */
   boolean hasReturn() { result = hasReturn }
@@ -464,10 +479,18 @@ class PathSummary extends TPathSummary {
    * a `call` step in order to maintain well-formedness.
    */
   PathSummary append(PathSummary that) {
+    // if `that` starts with a jump, discard context for `this`
     exists(Boolean hasReturn2, Boolean hasCall2, FlowLabel end2 |
-      that = MkPathSummary(hasReturn2, hasCall2, end, end2)
+      that = MkPathSummary(true, hasReturn2, hasCall2, end, end2)
     |
-      result = MkPathSummary(hasReturn.booleanOr(hasReturn2), hasCall.booleanOr(hasCall2), start,
+      result = MkPathSummary(true, hasReturn2, hasCall2, start, end2)
+    )
+    or
+    // otherwise combine contexts
+    exists(Boolean hasReturn2, Boolean hasCall2, FlowLabel end2 |
+      that = MkPathSummary(false, hasReturn2, hasCall2, end, end2)
+    |
+      result = MkPathSummary(hasJump, hasReturn.booleanOr(hasReturn2), hasCall.booleanOr(hasCall2), start,
           end2) and
       // avoid constructing invalid paths
       not (hasCall = true and hasReturn2 = true)
@@ -481,9 +504,15 @@ class PathSummary extends TPathSummary {
    */
   PathSummary appendValuePreserving(PathSummary that) {
     exists(Boolean hasReturn2, Boolean hasCall2 |
-      that = MkPathSummary(hasReturn2, hasCall2, FlowLabel::data(), FlowLabel::data())
+      that = MkPathSummary(true, hasReturn2, hasCall2, FlowLabel::data(), FlowLabel::data())
     |
-      result = MkPathSummary(hasReturn.booleanOr(hasReturn2), hasCall.booleanOr(hasCall2), start,
+      result = MkPathSummary(true, hasReturn2, hasCall2, start, end)
+    )
+    or
+    exists(Boolean hasReturn2, Boolean hasCall2 |
+      that = MkPathSummary(false, hasReturn2, hasCall2, FlowLabel::data(), FlowLabel::data())
+    |
+      result = MkPathSummary(hasJump, hasReturn.booleanOr(hasReturn2), hasCall.booleanOr(hasCall2), start,
           end) and
       // avoid constructing invalid paths
       not (hasCall = true and hasReturn2 = true)
@@ -509,23 +538,28 @@ class PathSummary extends TPathSummary {
 
 module PathSummary {
   /**
-   * Gets a summary describing a path without any calls or returns.
+   * Gets a summary describing a path without any jumps, calls or returns.
    */
   PathSummary level() { result = level(_) }
 
   /**
-   * Gets a summary describing a path without any calls or returns, transforming `lbl` into
+   * Gets a summary describing a path without any jumps, calls or returns, transforming `lbl` into
    * itself.
    */
-  PathSummary level(FlowLabel lbl) { result = MkPathSummary(false, false, lbl, lbl) }
+  PathSummary level(FlowLabel lbl) { result = MkPathSummary(false, false, false, lbl, lbl) }
 
   /**
-   * Gets a summary describing a path with one or more calls, but no returns.
+   * Gets a summary describing a path with one or more calls, but no returns or jumps.
    */
-  PathSummary call() { exists(FlowLabel lbl | result = MkPathSummary(false, true, lbl, lbl)) }
+  PathSummary call() { exists(FlowLabel lbl | result = MkPathSummary(false, false, true, lbl, lbl)) }
 
   /**
-   * Gets a summary describing a path with one or more returns, but no calls.
+   * Gets a summary describing a path with one or more returns, but no calls or jumps.
    */
-  PathSummary return() { exists(FlowLabel lbl | result = MkPathSummary(true, false, lbl, lbl)) }
+  PathSummary return() { exists(FlowLabel lbl | result = MkPathSummary(false, true, false, lbl, lbl)) }
+
+  /**
+   * Gets a summary describing a path with one or more jumps, but no calls or returns.
+   */
+  PathSummary jump() { exists(FlowLabel lbl | result = MkPathSummary(true, false, false, lbl, lbl)) }
 }
