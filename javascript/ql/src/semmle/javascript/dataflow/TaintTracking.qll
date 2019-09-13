@@ -204,47 +204,88 @@ module TaintTracking {
     abstract predicate step(DataFlow::Node pred, DataFlow::Node succ);
   }
 
+  private class DefaultAdditionalTaintStep extends AdditionalTaintStep {
+    DefaultAdditionalTaintStep() { this instanceof DataFlow::AdditionalFlowStep }
+
+    override predicate step(DataFlow::Node pred, DataFlow::Node succ) {
+      this.(DataFlow::AdditionalFlowStep).step(pred, succ, DataFlow::FlowLabel::taint(), DataFlow::FlowLabel::taint())
+    }
+  }
+
   /**
    * A taint propagating data flow edge through object or array elements and
    * promises.
    */
-  private class HeapTaintStep extends AdditionalTaintStep {
-    HeapTaintStep() {
-      this = DataFlow::valueNode(_) or
-      this = DataFlow::parameterNode(_) or
-      this instanceof DataFlow::PropRead
-    }
+  private class HeapTaintStep extends DataFlow::AdditionalFlowStep {
+    DataFlow::Node pred;
 
-    override predicate step(DataFlow::Node pred, DataFlow::Node succ) {
+    DataFlow::Node succ;
+
+    DataFlow::FlowLabel predlbl;
+
+    DataFlow::FlowLabel succlbl;
+
+    HeapTaintStep() {
       succ = this and
-      exists(Expr e, Expr f | e = this.asExpr() and f = pred.asExpr() |
-        // arrays with tainted elements and objects with tainted property names are tainted
-        e.(ArrayExpr).getAnElement() = f
-        or
-        exists(Property prop | e.(ObjectExpr).getAProperty() = prop |
-          prop.isComputed() and f = prop.getNameExpr()
+      (
+        exists(DataFlow::PropWrite pw |
+          pred = pw.getRhs() and
+          succ = pw.getBase().getALocalSource() and
+          predlbl instanceof DataFlow::StandardFlowLabel and
+          succlbl instanceof DataFlow::FlowLabel::ObjectWithTaintedValues
+          or
+          pw.isComputed() and
+          pred.asExpr() = pw.getPropertyNameExpr() and
+          succ = pw.getBase().getALocalSource() and
+          predlbl instanceof DataFlow::StandardFlowLabel and
+          succlbl instanceof DataFlow::FlowLabel::ObjectWithTaintedKeys
         )
         or
-        // awaiting a tainted expression gives a tainted result
-        e.(AwaitExpr).getOperand() = f
+        succ
+            .asExpr()
+            .(ObjectExpr)
+            .getAProperty()
+            .(SpreadProperty)
+            .getInit()
+            .(SpreadElement)
+            .getOperand() = pred.asExpr() and
+        predlbl instanceof DataFlow::FlowLabel::TaintedObject and
+        succlbl instanceof DataFlow::FlowLabel::ObjectWithTaintedValues
         or
-        // spreading a tainted object into an object literal gives a tainted object
-        e.(ObjectExpr).getAProperty().(SpreadProperty).getInit().(SpreadElement).getOperand() = f
+        succ.asExpr().(ArrayExpr).getAnElement().(SpreadElement).getOperand() = pred.asExpr() and
+        predlbl instanceof DataFlow::FlowLabel::TaintedObject and
+        succlbl instanceof DataFlow::FlowLabel::ObjectWithTaintedValues
         or
-        // spreading a tainted value into an array literal gives a tainted array
-        e.(ArrayExpr).getAnElement().(SpreadElement).getOperand() = f
+        succ.asExpr().(AwaitExpr).getOperand() = pred.asExpr() and
+        predlbl instanceof DataFlow::FlowLabel::TaintedObject and
+        succlbl instanceof DataFlow::FlowLabel::TaintedValue
+        or
+        // reading from a tainted object yields a tainted result
+        succ.(DataFlow::PropRead).getBase() = pred and
+        predlbl instanceof DataFlow::FlowLabel::FullyTaintedObject and
+        succlbl instanceof DataFlow::FlowLabel::TaintedValue
+        or
+        // iterating over a tainted iterator taints the loop variable
+        exists(EnhancedForLoop efl |
+          (
+            if efl instanceof ForInStmt
+            then predlbl instanceof DataFlow::FlowLabel::ObjectWithTaintedKeys
+            else predlbl instanceof DataFlow::FlowLabel::ObjectWithTaintedValues
+          )
+          or
+          predlbl instanceof DataFlow::FlowLabel::FullyTaintedObject
+        |
+          pred = DataFlow::valueNode(efl.getIterationDomain()) and
+          succ = DataFlow::lvalueNode(efl.getLValue()) and
+          succlbl instanceof DataFlow::FlowLabel::TaintedValue
+        )
       )
-      or
-      // reading from a tainted object yields a tainted result
-      this = succ and
-      succ.(DataFlow::PropRead).getBase() = pred
-      or
-      // iterating over a tainted iterator taints the loop variable
-      exists(ForOfStmt fos |
-        this = DataFlow::valueNode(fos.getIterationDomain()) and
-        pred = this and
-        succ = DataFlow::lvalueNode(fos.getLValue())
-      )
+    }
+
+    override predicate step(
+      DataFlow::Node p, DataFlow::Node s, DataFlow::FlowLabel plbl, DataFlow::FlowLabel slbl
+    ) {
+      p = pred and s = succ and plbl = predlbl and slbl = succlbl
     }
   }
 
@@ -346,6 +387,7 @@ module TaintTracking {
    */
   private class DictionaryTaintStep extends AdditionalTaintStep, DataFlow::ValueNode {
     override VarAccess astNode;
+
     DataFlow::Node source;
 
     DictionaryTaintStep() {
@@ -759,6 +801,7 @@ module TaintTracking {
   /** A check of the form `if(o[x] != undefined)`, which sanitizes `x` in its "then" branch. */
   class UndefinedCheckSanitizer extends AdditionalSanitizerGuardNode, DataFlow::ValueNode {
     Expr x;
+
     override EqualityTest astNode;
 
     UndefinedCheckSanitizer() {
@@ -802,6 +845,7 @@ module TaintTracking {
    */
   class PositiveIndexOfSanitizer extends AdditionalSanitizerGuardNode, DataFlow::ValueNode {
     MethodCallExpr indexOf;
+
     override RelationalComparison astNode;
 
     PositiveIndexOfSanitizer() {
@@ -827,6 +871,7 @@ module TaintTracking {
   /** A check of the form `if(x == 'some-constant')`, which sanitizes `x` in its "then" branch. */
   class ConstantComparison extends AdditionalSanitizerGuardNode, DataFlow::ValueNode {
     Expr x;
+
     override EqualityTest astNode;
 
     ConstantComparison() {
@@ -851,7 +896,9 @@ module TaintTracking {
    */
   private class SanitizingFunction extends Function {
     DataFlow::ParameterNode sanitizedParameter;
+
     SanitizerGuardNode sanitizer;
+
     boolean sanitizerOutcome;
 
     SanitizingFunction() {
@@ -917,6 +964,7 @@ module TaintTracking {
    */
   private class PostMessageEventSanitizer extends AdditionalSanitizerGuardNode, DataFlow::ValueNode {
     VarAccess event;
+
     override EqualityTest astNode;
 
     PostMessageEventSanitizer() {

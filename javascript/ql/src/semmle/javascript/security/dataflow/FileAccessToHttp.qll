@@ -15,24 +15,20 @@ module FileAccessToHttp {
   /**
    * A taint tracking configuration for file data in outbound network requests.
    */
-  class Configuration extends TaintTracking::Configuration {
+  class Configuration extends DataFlow::Configuration {
     Configuration() { this = "FileAccessToHttp" }
 
-    override predicate isSource(DataFlow::Node source) { source instanceof Source }
-
-    override predicate isSink(DataFlow::Node sink) { sink instanceof Sink }
-
-    override predicate isSanitizer(DataFlow::Node node) {
-      super.isSanitizer(node) or
-      node instanceof Sanitizer
+    override predicate isSource(DataFlow::Node source, DataFlow::FlowLabel label) {
+      source instanceof Source and label = DataFlow::FlowLabel::data()
     }
 
-    override predicate isAdditionalTaintStep(DataFlow::Node pred, DataFlow::Node succ) {
-      // taint entire object on property write
-      exists(DataFlow::PropWrite pwr |
-        succ = pwr.getBase() and
-        pred = pwr.getRhs()
-      )
+    override predicate isSink(DataFlow::Node sink, DataFlow::FlowLabel label) {
+      sink instanceof Sink and label = any(DataFlow::FlowLabel lbl)
+    }
+
+    override predicate isBarrier(DataFlow::Node node) {
+      super.isBarrier(node) or
+      node instanceof Sanitizer
     }
   }
 }

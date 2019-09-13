@@ -261,7 +261,7 @@ class TaintKind = FlowLabel;
  * A standard flow label, that is, either `FlowLabel::data()` or `FlowLabel::taint()`.
  */
 class StandardFlowLabel extends FlowLabel {
-  StandardFlowLabel() { this = "data" or this = "taint" }
+  StandardFlowLabel() { this = "data" or this = FlowLabel::taint() }
 }
 
 module FlowLabel {
@@ -270,11 +270,54 @@ module FlowLabel {
    */
   FlowLabel data() { result = "data" }
 
+  abstract class TaintedValue extends FlowLabel {
+    bindingset[this]
+    TaintedValue() { any() }
+  }
+
+  abstract class TaintedString extends TaintedValue {
+    bindingset[this]
+    TaintedString() { any() }
+  }
+
+  class FullyTaintedString extends TaintedString {
+    FullyTaintedString() { this = "fully tainted string" }
+  }
+
+  class PartiallyTaintedString extends TaintedString {
+    PartiallyTaintedString() { this = "partially tainted string" }
+  }
+
+  abstract class TaintedObject extends TaintedValue {
+    bindingset[this]
+    TaintedObject() { any() }
+  }
+
+  class FullyTaintedObject extends TaintedObject {
+    FullyTaintedObject() { this = "fully tainted object" }
+  }
+
+  abstract class PartiallyTaintedObject extends TaintedObject {
+    bindingset[this]
+    PartiallyTaintedObject() { any() }
+  }
+
+  class ObjectWithTaintedValues extends PartiallyTaintedObject {
+    ObjectWithTaintedValues() { this = "object with tainted values" }
+  }
+
+  class ObjectWithTaintedKeys extends PartiallyTaintedObject {
+    ObjectWithTaintedKeys() { this = "object with tainted keys" }
+  }
+
   /**
-   * Gets the standard flow label for describing values that are influenced ("tainted") by a flow
+   * Gets a standard flow label for describing values that are influenced ("tainted") by a flow
    * source, but not necessarily directly derived from it.
    */
-  FlowLabel taint() { result = "taint" }
+  FlowLabel taint() {
+    result instanceof TaintedValue and
+    not result instanceof PartiallyTaintedObject
+  }
 }
 
 /**

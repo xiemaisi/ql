@@ -517,6 +517,8 @@ module DataFlow {
      */
     abstract Node getRhs();
 
+    abstract predicate isComputed();
+
     /**
      * Holds if this data flow node writes the value of `rhs` to property
      * `prop` of the object that `base` evaluates to.
@@ -548,6 +550,8 @@ module DataFlow {
 
     override string getPropertyName() { result = astNode.getPropertyName() }
 
+    override predicate isComputed() { astNode instanceof IndexExpr }
+
     override Node getRhs() { result = valueNode(astNode.(LValue).getRhs()) }
 
     override ControlFlowNode getWriteNode() { result = astNode.(LValue).getDefNode() }
@@ -565,6 +569,8 @@ module DataFlow {
     override Expr getPropertyNameExpr() { result = prop.getNameExpr() }
 
     override string getPropertyName() { result = prop.getName() }
+
+    override predicate isComputed() { prop.isComputed() }
 
     override Node getRhs() { result = valueNode(prop.(ValueProperty).getInit()) }
 
@@ -594,6 +600,8 @@ module DataFlow {
       )
     }
 
+    override predicate isComputed() { any() }
+
     override ControlFlowNode getWriteNode() { result = odp.getAstNode() }
   }
 
@@ -611,6 +619,8 @@ module DataFlow {
     override Expr getPropertyNameExpr() { result = prop.getNameExpr() }
 
     override string getPropertyName() { result = prop.getName() }
+
+    override predicate isComputed() { prop.isComputed() }
 
     override Node getRhs() {
       not prop instanceof AccessorMethodDefinition and
@@ -635,6 +645,8 @@ module DataFlow {
 
     override string getPropertyName() { result = prop.getName() }
 
+    override predicate isComputed() { prop.isComputed() }
+
     override Node getRhs() {
       not prop instanceof AccessorMethodDefinition and
       result = valueNode(prop.getInit())
@@ -656,6 +668,8 @@ module DataFlow {
 
     override string getPropertyName() { result = prop.getName() }
 
+    override predicate isComputed() { none() }
+
     override Node getRhs() { result = valueNode(prop.getValue()) }
 
     override ControlFlowNode getWriteNode() { result = prop }
@@ -674,6 +688,8 @@ module DataFlow {
     override Expr getPropertyNameExpr() { result = prop.getNameExpr() }
 
     override string getPropertyName() { result = prop.getName() }
+
+    override predicate isComputed() { none() }
 
     override Node getRhs() {
       exists(Parameter param, Node paramNode |
@@ -710,6 +726,8 @@ module DataFlow {
     override Expr getPropertyNameExpr() { result = prop.getNameExpr() }
 
     override string getPropertyName() { result = prop.getName() }
+
+    override predicate isComputed() { prop.isComputed() }
 
     override Node getRhs() { result = valueNode(prop.getInit()) }
 
@@ -1088,6 +1106,8 @@ module DataFlow {
     override Expr getPropertyNameExpr() { none() }
 
     override string getPropertyName() { none() }
+
+    override predicate isComputed() { none() }
 
     override Node getRhs() { result = valueNode(elt) }
 
