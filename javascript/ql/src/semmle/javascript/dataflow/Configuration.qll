@@ -1113,5 +1113,5 @@ module PathGraph {
   }
 
   /** Holds if `pred` &rarr; `succ` is an edge in the graph of data flow path explanations. */
-  query predicate edges(PathNode pred, PathNode succ) { pred.getASuccessor() = succ }
+  query predicate edges(PathNode pred, PathNode succ) { pred.getASuccessor() = succ and nodes(pred) and nodes(succ) }
 }
