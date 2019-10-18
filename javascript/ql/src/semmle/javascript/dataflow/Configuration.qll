@@ -153,6 +153,23 @@ abstract class Configuration extends string {
   }
 
   /**
+   * Holds if there is no data flow out of `node`.
+   */
+  predicate isTerminal(DataFlow::Node node) {
+    not flowStep(node, this, _, _)
+  }
+
+  /**
+   * Holds if there is no flow of data labeled with `lbl` out of `node`.
+   */
+  predicate isTerminal(DataFlow::Node node, FlowLabel lbl) {
+    not exists(PathSummary summary |
+      flowStep(node, this, _, summary) and
+      lbl = summary.getStartLabel()
+    )
+  }
+
+  /**
    * DEPRECATED: Use `isBarrierEdge` instead.
    *
    * Holds if flow from `src` to `trg` is prohibited.
