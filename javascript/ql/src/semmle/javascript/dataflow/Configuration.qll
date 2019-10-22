@@ -1085,25 +1085,76 @@ class PathNode extends TPathNode {
   }
 }
 
-private PathNode getASuccessor(PathNode pnd) {
-  exists(DataFlow::Node nd, Configuration cfg, PathSummary summary |
-    // source node to mid node
-    pnd = MkSourceNode(nd, cfg) and
-    mkSourceNode(nd, cfg, summary) and
-    result = MkMidNode(nd, cfg, summary)
-    or
-    // mid node to mid node
-    pnd = MkMidNode(nd, cfg, summary) and
-    exists(DataFlow::Node succ, PathSummary newSummary |
-      flowStep(nd, id(cfg), succ, newSummary) and
-      result = MkMidNode(succ, id(cfg), summary.append(newSummary))
-    )
-    or
-    // mid node to sink node
-    pnd = MkMidNode(nd, cfg, summary) and
-    mkSinkNode(nd, cfg, summary) and
-    result = MkSinkNode(nd, cfg)
+private SourcePathNode asSourceNode(PathNode nd) {
+  result = MkSourceNode(nd.getNode(), nd.getConfiguration())
+}
+
+private SinkPathNode asSinkNode(PathNode nd) {
+  result = MkSinkNode(nd.getNode(), nd.getConfiguration())
+}
+
+/**
+ * Gets a node to which data from `nd` may flow in one step.
+ */
+private PathNode getASuccessor0(PathNode nd) {
+  // source node to mid node
+  nd = asSourceNode(result.(MidPathNode))
+  or
+  // mid node to mid node
+  exists(Configuration cfg, DataFlow::Node predNd, PathSummary summary, DataFlow::Node succNd, PathSummary newSummary |
+    nd = MkMidNode(predNd, cfg, summary) and
+    flowStep(predNd, id(cfg), succNd, newSummary) and
+    result = MkMidNode(succNd, id(cfg), summary.append(newSummary))
   )
+  or
+  // mid node to sink node
+  result = asSinkNode(nd.(MidPathNode))
+}
+
+/**
+ * Gets a node to which data from `nd` may flow in one step, where outgoing edges from intermediate
+ * nodes are merged into the corresponding source node, if any.
+ *
+ * For example, assume that `src` is a source node for `nd1`, which has `nd2` as its direct
+ * successor. Then `getASuccessor0` will yield two edges `src` &rarr; `nd1` and `nd1` &rarr; `nd2`,
+ * while `getASuccessor1` will yield just one edge `src` &rarr; `nd2`.
+ */
+private PathNode getASuccessor1(PathNode nd) {
+  result = getASuccessor0(nd) and
+  not nd = asSourceNode(result)
+  or
+  exists(PathNode first |
+    nd = asSourceNode(first) and
+    result = getASuccessor0(first)
+  )
+}
+
+/**
+ * Gets a node to which data from `nd` may flow in one step, where incoming edges into intermediate
+ * nodes are merged into the corresponding sink node, if any.
+ *
+ * For example, assume that `snk` is a source node for `nd2`, which has `nd1` as its direct
+ * predecessor. Then `getASuccessor1` will yield two edges `nd1` &rarr; `nd2` and `nd2` &rarr; `snk`,
+ * while `getASuccessor2` will yield just one edge `nd1` &rarr; `snk`.
+ */
+private PathNode getASuccessor2(PathNode nd) {
+  result = getASuccessor1(nd) and
+  not result = asSinkNode(nd)
+  or
+  exists(PathNode last |
+    last = getASuccessor1(nd) and
+    result = asSinkNode(last)
+  )
+}
+
+/**
+ * Gets a node to which data from `nd` may flow in one step.
+ *
+ * There are no edges from source nodes to their corresponding intermediate nodes, or from intermediate
+ * nodes to their corresponding sink nodes. Instead, these edges are merged with adjacent edges.
+ */
+private PathNode getASuccessor(PathNode nd) {
+  result = getASuccessor2(nd)
 }
 
 private PathNode getASuccessorIfHidden(PathNode nd) {
@@ -1139,12 +1190,6 @@ class MidPathNode extends PathNode, MkMidNode {
     // Skip to the top of big left-leaning string concatenation trees.
     nd = any(AddExpr add).flow() and
     nd = any(AddExpr add).getAnOperand().flow()
-    or
-    // Skip mid node immediately following a source node
-    exists(MkSourceNode(nd, cfg))
-    or
-    // Skip mid node immediately preceding a sink node
-    exists(MkSinkNode(nd, cfg))
   }
 }
 
